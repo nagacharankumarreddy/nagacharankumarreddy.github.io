@@ -11,20 +11,8 @@
     />
     <title>Charan's Portfolio</title>
     <script>
-      (function () {
-        var stored = localStorage.getItem("portfolio-theme");
-        var theme =
-          stored === "light" || stored === "dark" || stored === "system"
-            ? stored
-            : "dark";
-        var resolved =
-          theme === "system"
-            ? window.matchMedia("(prefers-color-scheme: dark)").matches
-              ? "dark"
-              : "light"
-            : theme;
-        document.documentElement.setAttribute("data-theme", resolved);
-      })();
+      // Theme switching is temporarily hidden; locked to dark until re-enabled.
+      document.documentElement.setAttribute("data-theme", "dark");
     </script>
   </head>
   <body>

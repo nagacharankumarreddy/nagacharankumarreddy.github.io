@@ -8,10 +8,10 @@ const STORAGE_KEY = "portfolio-theme";
 const getSystemTheme = (): ResolvedTheme =>
   window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 
-const readStoredTheme = (): ThemeMode => {
-  const stored = localStorage.getItem(STORAGE_KEY);
-  return stored === "light" || stored === "dark" || stored === "system" ? stored : "dark";
-};
+// Theme switching is temporarily hidden (toggle removed from the navbar);
+// the site is locked to dark until it's re-enabled. Restore the localStorage
+// read below to bring back light/system support.
+const readStoredTheme = (): ThemeMode => "dark";
 
 const resolveTheme = (theme: ThemeMode): ResolvedTheme =>
   theme === "system" ? getSystemTheme() : theme;

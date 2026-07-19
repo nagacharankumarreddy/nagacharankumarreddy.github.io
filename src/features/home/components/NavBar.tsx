@@ -6,7 +6,6 @@ import navIcon4 from "../../../assets/img/github.svg";
 import navIcon2 from "../../../assets/img/gmail.svg";
 import navIcon1 from "../../../assets/img/linkedin.svg";
 import navIcon3 from "../../../assets/img/phone.svg";
-import { ThemeToggle } from "../../../app/theme/ThemeToggle";
 
 export const NavBar = () => {
   const [activeLink, setActiveLink] = useState("home");
@@ -107,7 +106,6 @@ export const NavBar = () => {
                 <img src={navIcon4} alt="github" />
               </a>
             </div>
-            <ThemeToggle />
             <HashLink to="/#contact">
               <button>
                 <span>Contact</span>
