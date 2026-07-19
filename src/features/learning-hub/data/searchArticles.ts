@@ -1,12 +1,9 @@
 import Fuse from "fuse.js";
+import type { LearningHubArticle } from "../../../types/learningHub";
 import { getDiscoveredArticles, getDiscoveredCategories } from "./discoverContent";
 
-interface SearchableArticle {
-  slug: string;
-  categorySlug: string;
+interface SearchableArticle extends LearningHubArticle {
   categoryTitle: string;
-  title: string;
-  description: string;
   content: string;
 }
 
@@ -15,12 +12,8 @@ const categoryTitleBySlug = new Map(
 );
 
 const searchableArticles: SearchableArticle[] = getDiscoveredArticles().map((article) => ({
-  slug: article.slug,
-  categorySlug: article.categorySlug,
+  ...article,
   categoryTitle: categoryTitleBySlug.get(article.categorySlug) ?? article.categorySlug,
-  title: article.title,
-  description: article.description,
-  content: article.content,
 }));
 
 const fuse = new Fuse(searchableArticles, {

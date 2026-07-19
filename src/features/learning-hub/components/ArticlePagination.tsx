@@ -14,10 +14,7 @@ export const ArticlePagination = ({ previous, next }: ArticlePaginationProps) =>
   return (
     <nav className="article-pagination" aria-label="Article navigation">
       {previous ? (
-        <Link
-          to={`/learning/${previous.categorySlug}/${previous.slug}`}
-          className="article-pagination-link article-pagination-prev"
-        >
+        <Link to={previous.url} className="article-pagination-link article-pagination-prev">
           <span className="article-pagination-label">← Previous</span>
           <span className="article-pagination-title">{previous.title}</span>
         </Link>
@@ -25,10 +22,7 @@ export const ArticlePagination = ({ previous, next }: ArticlePaginationProps) =>
         <span aria-hidden="true" />
       )}
       {next ? (
-        <Link
-          to={`/learning/${next.categorySlug}/${next.slug}`}
-          className="article-pagination-link article-pagination-next"
-        >
+        <Link to={next.url} className="article-pagination-link article-pagination-next">
           <span className="article-pagination-label">Next →</span>
           <span className="article-pagination-title">{next.title}</span>
         </Link>

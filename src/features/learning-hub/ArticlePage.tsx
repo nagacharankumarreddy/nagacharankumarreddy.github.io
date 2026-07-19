@@ -13,10 +13,11 @@ import { useHeadings } from "./lib/useHeadings";
 import "./styles/learning-hub.css";
 
 export const ArticlePage = () => {
-  const { categorySlug, articleSlug } = useParams<{
-    categorySlug: string;
-    articleSlug: string;
-  }>();
+  const params = useParams();
+  const categorySlug = params.categorySlug;
+  // "*" is the splat segment from the "/learning/:categorySlug/*" route —
+  // it captures the full article slug, including any nested "/" segments.
+  const articleSlug = params["*"];
 
   const contentRef = useRef<HTMLDivElement>(null);
   const headings = useHeadings(contentRef, `${categorySlug}/${articleSlug}`);

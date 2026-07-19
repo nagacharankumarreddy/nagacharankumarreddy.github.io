@@ -24,8 +24,10 @@ export const AppRoutes = () => {
               </Suspense>
             }
           />
+          {/* "*" captures the rest of the path so nested article folders
+              (e.g. azure/security/entra-auth) resolve without new routes. */}
           <Route
-            path="/learning/:categorySlug/:articleSlug"
+            path="/learning/:categorySlug/*"
             element={
               <Suspense fallback={null}>
                 <ArticlePage />

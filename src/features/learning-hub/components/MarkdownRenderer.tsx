@@ -45,6 +45,25 @@ SyntaxHighlighter.registerLanguage("yml", yaml);
 const isExternalHref = (href: string) =>
   /^([a-z][a-z0-9+.-]*:)/i.test(href) && !href.startsWith("#");
 
+/**
+ * Resolves a local image reference to its build asset URL regardless of how
+ * it was written in the Markdown ("./images/x.png", "images/x.png", or a bare
+ * "x.png"), and regardless of URL-encoding (authors often write "%20" for a
+ * space, while the actual map key is the literal, decoded filename).
+ */
+const resolveLocalImageSrc = (src: string, images: Record<string, string>): string => {
+  const fileName = src.split("/").pop() ?? src;
+
+  let decodedFileName = fileName;
+  try {
+    decodedFileName = decodeURIComponent(fileName);
+  } catch {
+    // Malformed escape sequence — fall back to the raw filename.
+  }
+
+  return images[decodedFileName] ?? images[fileName] ?? src;
+};
+
 interface MarkdownRendererProps {
   content: string;
   /** Maps local image references (as written in the Markdown) to resolved asset URLs. */
@@ -73,7 +92,8 @@ export const MarkdownRenderer = ({ content, images = {} }: MarkdownRendererProps
       );
     },
     img: ({ src = "", alt, ...props }) => {
-      const resolvedSrc = images[src] ?? src;
+      const isExternal = isExternalHref(src);
+      const resolvedSrc = isExternal ? src : resolveLocalImageSrc(src, images);
       return <img src={resolvedSrc} alt={alt} loading="lazy" {...props} />;
     },
     code(props) {
