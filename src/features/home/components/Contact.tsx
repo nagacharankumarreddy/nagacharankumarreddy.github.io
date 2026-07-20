@@ -53,7 +53,8 @@ export const Contact = () => {
           setSendState("success");
           setFormData({ from_name: "", from_email: "", subject: "", message: "" });
         },
-        () => {
+        (error) => {
+          console.error("EmailJS send failed:", error);
           setSendState("error");
         }
       );
