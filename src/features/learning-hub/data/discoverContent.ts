@@ -1,4 +1,10 @@
-import type { LearningHubArticle, LearningHubCategory } from "../../../types/learningHub";
+import type {
+  LearningHubArticle,
+  LearningHubCategory,
+  LearningPath,
+} from "../../../types/learningHub";
+import { parseSimpleYaml } from "../lib/parseSimpleYaml";
+import { estimateReadingTimeMinutes } from "../lib/readingTime";
 
 export interface DiscoveredArticle extends LearningHubArticle {
   content: string;
@@ -19,8 +25,10 @@ const humanize = (slug: string): string =>
     .join(" ");
 
 interface Frontmatter {
+  id?: string;
   title?: string;
   description?: string;
+  learningPath?: string;
   tags?: string[];
   body: string;
 }
@@ -28,10 +36,8 @@ interface Frontmatter {
 const FRONTMATTER_PATTERN = /^---\r?\n([\s\S]*?)\r?\n---\r?\n?/;
 
 /**
- * Minimal, dependency-free front matter reader: supports simple `key: value`
- * lines and a `tags: [a, b]` / `tags: a, b` list. Purely optional and additive —
- * content without a front matter block (every existing article) is returned
- * completely unchanged via `body`.
+ * Front matter is purely optional and additive — content without a front matter
+ * block is returned completely unchanged via `body`.
  */
 const parseFrontmatter = (content: string): Frontmatter => {
   const match = content.match(FRONTMATTER_PATTERN);
@@ -40,28 +46,19 @@ const parseFrontmatter = (content: string): Frontmatter => {
   }
 
   const body = content.slice(match[0].length);
-  const unquote = (value: string) => value.trim().replace(/^["']|["']$/g, "");
-  const data: Record<string, string> = {};
+  const data = parseSimpleYaml(match[1]);
 
-  for (const line of match[1].split(/\r?\n/)) {
-    const lineMatch = line.match(/^([a-zA-Z0-9_-]+):\s*(.*)$/);
-    if (lineMatch) {
-      data[lineMatch[1].trim()] = lineMatch[2];
-    }
-  }
-
-  const tags = data.tags
-    ? data.tags
-        .replace(/^\[|\]$/g, "")
-        .split(",")
-        .map(unquote)
-        .filter(Boolean)
-    : undefined;
+  const asString = (value: string | string[] | undefined): string | undefined =>
+    Array.isArray(value) ? undefined : value;
+  const asStringArray = (value: string | string[] | undefined): string[] | undefined =>
+    Array.isArray(value) ? value : undefined;
 
   return {
-    title: data.title ? unquote(data.title) : undefined,
-    description: data.description ? unquote(data.description) : undefined,
-    tags,
+    id: asString(data.id),
+    title: asString(data.title),
+    description: asString(data.description),
+    learningPath: asString(data.learningPath),
+    tags: asStringArray(data.tags),
     body,
   };
 };
@@ -101,6 +98,13 @@ const imageModules = import.meta.glob<string>("../../../../content/**/images/*",
   import: "default",
 });
 
+// Eagerly loaded at build time: every learning-path config, e.g. learning-paths/entra-auth.yaml.
+const learningPathModules = import.meta.glob<string>("../../../../learning-paths/*.yaml", {
+  eager: true,
+  query: "?raw",
+  import: "default",
+});
+
 // Keyed by filename only — MarkdownRenderer normalizes whatever prefix/encoding
 // an author wrote ("./images/x.png", "images/x.png", or a bare "x.png", with or
 // without "%20"-style escaping) down to the literal, decoded filename before
@@ -128,7 +132,7 @@ const discoveredArticles: DiscoveredArticle[] = Object.entries(markdownModules)
 
     const [, categorySlug, articleSlug] = match;
     const folderName = articleSlug.split("/").pop() ?? articleSlug;
-    const { title, description, tags, body } = parseFrontmatter(rawContent);
+    const { id, title, description, learningPath, tags, body } = parseFrontmatter(rawContent);
 
     const article: DiscoveredArticle = {
       slug: articleSlug,
@@ -137,6 +141,9 @@ const discoveredArticles: DiscoveredArticle[] = Object.entries(markdownModules)
       description: description ?? extractDescription(body),
       tags: tags ?? [],
       url: `/learning/${categorySlug}/${articleSlug}`,
+      id: id ?? articleSlug,
+      learningPathId: learningPath,
+      readingTimeMinutes: estimateReadingTimeMinutes(body),
       content: body,
       images: buildImageMap(categorySlug, articleSlug),
     };
@@ -145,6 +152,41 @@ const discoveredArticles: DiscoveredArticle[] = Object.entries(markdownModules)
   })
   .filter((article): article is DiscoveredArticle => article !== null)
   .sort((a, b) => a.title.localeCompare(b.title));
+
+const discoveredLearningPaths: Map<string, LearningPath> = (() => {
+  const paths = new Map<string, LearningPath>();
+
+  for (const rawContent of Object.values(learningPathModules)) {
+    const data = parseSimpleYaml(rawContent);
+    const id = typeof data.id === "string" ? data.id : undefined;
+    const title = typeof data.title === "string" ? data.title : undefined;
+    const articles = Array.isArray(data.articles) ? data.articles : undefined;
+
+    if (!id || !title || !articles) continue;
+
+    paths.set(id, {
+      id,
+      title,
+      description: typeof data.description === "string" ? data.description : "",
+      articles,
+    });
+  }
+
+  return paths;
+})();
+
+// Dev-time validation only: every article id listed in a learning path must resolve
+// to a real discovered article. Logged, not thrown — a typo shouldn't break the build.
+for (const path of discoveredLearningPaths.values()) {
+  for (const articleId of path.articles) {
+    const exists = discoveredArticles.some((article) => article.id === articleId);
+    if (!exists) {
+      console.error(
+        `Learning path "${path.id}" references unknown article id "${articleId}".`
+      );
+    }
+  }
+}
 
 const discoveredCategories: LearningHubCategory[] = (() => {
   const categoryMap = new Map<string, LearningHubCategory>();
@@ -185,13 +227,66 @@ export interface AdjacentArticles {
   next: DiscoveredArticle | null;
 }
 
-/** Previous/next relative to the same global, title-sorted article order shown on the landing page. */
+export const getDiscoveredLearningPaths = (): LearningPath[] =>
+  Array.from(discoveredLearningPaths.values());
+
+export const getDiscoveredLearningPath = (id: string): LearningPath | undefined =>
+  discoveredLearningPaths.get(id);
+
+export interface LearningPathProgress {
+  path: LearningPath;
+  position: number;
+  total: number;
+}
+
+export const getLearningPathProgress = (
+  categorySlug: string,
+  articleSlug: string
+): LearningPathProgress | null => {
+  const article = findDiscoveredArticle(categorySlug, articleSlug);
+  const path = article?.learningPathId ? discoveredLearningPaths.get(article.learningPathId) : undefined;
+
+  if (!article || !path) {
+    return null;
+  }
+
+  const position = path.articles.indexOf(article.id);
+  if (position === -1) {
+    return null;
+  }
+
+  return { path, position: position + 1, total: path.articles.length };
+};
+
+/**
+ * Previous/next relative to the article's learning path order, when it belongs to one.
+ * Falls back to the global, title-sorted article order (as shown on the landing page)
+ * for articles with no learning path — this keeps legacy/standalone articles working
+ * exactly as before this feature existed.
+ */
 export const getAdjacentDiscoveredArticles = (
   categorySlug: string,
   articleSlug: string
 ): AdjacentArticles => {
+  const article = findDiscoveredArticle(categorySlug, articleSlug);
+  const path = article?.learningPathId ? discoveredLearningPaths.get(article.learningPathId) : undefined;
+
+  if (article && path) {
+    const order = path.articles;
+    const index = order.indexOf(article.id);
+    const resolve = (id: string | undefined): DiscoveredArticle | null =>
+      id ? discoveredArticles.find((candidate) => candidate.id === id) ?? null : null;
+
+    if (index !== -1) {
+      return {
+        previous: index > 0 ? resolve(order[index - 1]) : null,
+        next: index < order.length - 1 ? resolve(order[index + 1]) : null,
+      };
+    }
+  }
+
   const index = discoveredArticles.findIndex(
-    (article) => article.categorySlug === categorySlug && article.slug === articleSlug
+    (candidate) => candidate.categorySlug === categorySlug && candidate.slug === articleSlug
   );
 
   if (index === -1) {

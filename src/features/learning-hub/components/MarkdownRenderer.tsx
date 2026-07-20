@@ -18,6 +18,7 @@ import typescript from "react-syntax-highlighter/dist/esm/languages/prism/typesc
 import yaml from "react-syntax-highlighter/dist/esm/languages/prism/yaml";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 import remarkGfm from "remark-gfm";
+import { ZoomableImage } from "./ZoomableImage";
 import "./styles/markdown-renderer.css";
 
 SyntaxHighlighter.registerLanguage("bash", bash);
@@ -91,10 +92,10 @@ export const MarkdownRenderer = ({ content, images = {} }: MarkdownRendererProps
         </Link>
       );
     },
-    img: ({ src = "", alt, ...props }) => {
+    img: ({ src = "", alt }) => {
       const isExternal = isExternalHref(src);
       const resolvedSrc = isExternal ? src : resolveLocalImageSrc(src, images);
-      return <img src={resolvedSrc} alt={alt} loading="lazy" {...props} />;
+      return <ZoomableImage src={resolvedSrc} alt={alt} />;
     },
     code(props) {
       const { children, className, ...rest } = props;

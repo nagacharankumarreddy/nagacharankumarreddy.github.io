@@ -1,0 +1,16 @@
+id: entra-auth
+title: Microsoft Entra Authentication
+description: End-to-end Microsoft Entra learning path.
+articles:
+  - identity-fundamentals
+  - core-architecture
+  - app-registration
+  - oauth-2.0
+  - oauth-flow-comparison
+  - authorization-code-flow
+  - jwt-token-architecture
+  - cryptography
+  - microsoft-graph
+  - permissions-and-consent
+  - conditional-access
+  - complete-enterprise-authentication-architecture
