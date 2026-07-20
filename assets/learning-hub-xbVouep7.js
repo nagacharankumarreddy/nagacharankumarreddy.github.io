@@ -1,4 +1,4 @@
-import{j as l,C as p}from"./index-DBTiBFEf.js";const D=({title:n,subtitle:e,beforeTitle:t,children:i})=>l.jsx("section",{className:"learning-hub",id:"learning-hub",children:l.jsxs(p,{children:[t,l.jsx("h1",{children:n}),e&&l.jsx("p",{className:"learning-hub-subtitle",children:e}),i]})}),g=`# Complete Enterprise Authentication, Authorization, Deployment & Runtime Architecture
+import{j as l,C as p}from"./index-COSuQy-H.js";const D=({title:n,subtitle:e,beforeTitle:t,children:i})=>l.jsx("section",{className:"learning-hub",id:"learning-hub",children:l.jsxs(p,{children:[t,l.jsx("h1",{children:n}),e&&l.jsx("p",{className:"learning-hub-subtitle",children:e}),i]})}),g=`# Complete Enterprise Authentication, Authorization, Deployment & Runtime Architecture
 
 Modern enterprise applications are much more than a frontend and a backend. Every user request travels through multiple systems responsible for authentication, authorization, deployment, networking, security, and runtime management. Understanding how these components work together is essential for developers building secure and scalable cloud-native applications.
 
