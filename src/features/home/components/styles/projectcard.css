@@ -1,41 +1,77 @@
+.proj-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  margin-bottom: 30px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--surface-1);
+  border: 1px solid var(--border-1);
+  text-decoration: none;
+  color: inherit;
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.proj-card:hover {
+  transform: translateY(-6px);
+  border-color: #aa367c;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
+  color: inherit;
+}
+
 .proj-imgbx {
   position: relative;
   overflow: hidden;
-  border-radius: 10px;
-  transition: transform 0.3s ease-in-out;
+  aspect-ratio: 16 / 10;
 }
 
 .proj-imgbx img {
   width: 100%;
-  height: auto;
-  border-radius: 10px;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.35s ease;
 }
 
-.proj-imgbx:hover {
-  transform: scale(1.05);
+.proj-card:hover .proj-imgbx img {
+  transform: scale(1.06);
 }
 
-.proj-txtx {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  background: rgba(0, 0, 0, 0.7);
-  color: white;
-  text-align: center;
-  padding: 10px;
-  border-bottom-left-radius: 10px;
-  border-bottom-right-radius: 10px;
+.proj-body {
   display: flex;
-  align-items: center;
-  justify-content: center;
   flex-direction: column;
+  flex: 1;
+  padding: 20px;
 }
 
-.proj-txtx h4 {
+.proj-body h4 {
   font-size: 18px;
-  margin: 0;
+  font-weight: 700;
+  margin: 0 0 8px 0;
 }
 
-.proj-txtx div {
+.proj-body p {
   font-size: 14px;
+  color: var(--color-text-muted);
+  margin: 0 0 16px 0;
+  flex: 1;
+}
+
+.proj-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  background: linear-gradient(90.21deg, #aa367c -5.91%, #4a2fbd 111.58%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.proj-link svg {
+  font-size: 12px;
+  color: #aa367c;
 }

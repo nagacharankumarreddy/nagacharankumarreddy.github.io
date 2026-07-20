@@ -11,6 +11,7 @@ import {
 } from "react-icons/fa";
 import TrackVisibility from "react-on-screen";
 import { HashLink } from "react-router-hash-link";
+import headerImg from "../../../assets/img/charanbw.png";
 
 export const Banner = () => {
   const [loopNum, setLoopNum] = useState(0);
@@ -55,7 +56,7 @@ export const Banner = () => {
     <section className="banner" id="home">
       <Container style={{ marginTop: "-70px" }}>
         <Row className="aligh-items-center">
-          <Col xs={12} lg={8} xl={7}>
+          <Col xs={12} lg={8} xl={7} md={7}>
             <TrackVisibility>
               {({ isVisible }) => (
                 <div
@@ -126,6 +127,19 @@ export const Banner = () => {
                       </a>
                     </div>
                   </div>
+                </div>
+              )}
+            </TrackVisibility>
+          </Col>
+          <Col xs={12} md={5} xl={5} className="banner-img-col">
+            <TrackVisibility>
+              {({ isVisible }) => (
+                <div
+                  className={
+                    isVisible ? "animate__animated animate__zoomIn" : ""
+                  }
+                >
+                  <img src={headerImg} alt="Charan" className="banner-img" />
                 </div>
               )}
             </TrackVisibility>
