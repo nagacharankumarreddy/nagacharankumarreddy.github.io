@@ -1,4 +1,4 @@
-import{j as p,C as A}from"./index-aa3kzacl.js";const pn=({title:t,subtitle:e,beforeTitle:n,sidebar:s,children:i})=>{const o=p.jsxs(p.Fragment,{children:[p.jsx("h1",{children:t}),e&&p.jsx("p",{className:"learning-hub-subtitle",children:e}),i]});return p.jsx("section",{className:"learning-hub",id:"learning-hub",children:p.jsxs(A,{children:[n,s?p.jsxs("div",{className:"learning-hub-with-sidebar",children:[s,p.jsx("div",{children:o})]}):o]})})},v=`---
+import{j as p,C as A}from"./index-Bg8udfb8.js";const cn=({title:t,subtitle:e,beforeTitle:n,sidebar:s,children:i})=>{const o=p.jsxs(p.Fragment,{children:[p.jsx("h1",{children:t}),e&&p.jsx("p",{className:"learning-hub-subtitle",children:e}),i]});return p.jsx("section",{className:"learning-hub",id:"learning-hub",children:p.jsxs(A,{children:[n,s?p.jsxs("div",{className:"learning-hub-with-sidebar",children:[s,p.jsx("div",{children:o})]}):o]})})},v=`---
 id: app-registration
 title: Microsoft Entra - App Registration & Service Principal
 description: Learn how applications are registered in Microsoft Entra, how Service Principals are created, and how Enterprise Applications manage access within a tenant.
@@ -2117,7 +2117,7 @@ Over the course of this documentation series, you explored:
 12. Complete Enterprise Authentication Architecture
 
 Together, these articles provide a complete foundation for understanding how Microsoft Entra secures identities, applications, APIs, and enterprise resources using modern identity standards and Zero Trust principles.
-`,k=`---
+`,T=`---
 id: conditional-access
 title: Microsoft Entra - Conditional Access
 description: Learn how Microsoft Entra Conditional Access evaluates users, applications, devices, locations, and risk signals to enforce adaptive access policies using a Zero Trust security model.
@@ -2991,7 +2991,7 @@ Successful implementations follow a continuous lifecycle of planning, testing, d
 - Grant controls can require MFA, compliant devices, hybrid joined devices, or block access.
 - Sign-in Logs, Audit Logs, Insights, and Workbooks provide visibility into policy behavior.
 - Regular monitoring and policy reviews are essential for maintaining an effective Zero Trust security posture.
-`,T=`---
+`,k=`---
 id: core-architecture
 title: Microsoft Entra - Core Architecture
 description: Understand the core architecture of Microsoft Entra ID, including identities, applications, authentication, authorization, policies, resources, and the overall access flow.
@@ -4771,161 +4771,7 @@ Understanding these concepts makes it significantly easier to learn OAuth 2.0, O
 - MFA strengthens security.
 - Tokens carry identity information between applications.
 - Microsoft Entra centralizes enterprise identity management.
-`,E=`# Complete Enterprise Authentication, Authorization, Deployment & Runtime Architecture
-
-Modern enterprise applications are much more than a frontend and a backend. Every user request travels through multiple systems responsible for authentication, authorization, deployment, networking, security, and runtime management. Understanding how these components work together is essential for developers building secure and scalable cloud-native applications.
-
-This article provides a high-level overview of a modern enterprise architecture using **Microsoft Entra ID**, **React**, **Node.js**, **Apigee**, **Google Kubernetes Engine (GKE)**, **GitHub Actions**, **Argo CD**, and **HashiCorp Vault**. Instead of focusing on implementation details, we'll follow the journey of an application—from development and deployment to user authentication and secure API communication.
-
----
-
-# Enterprise Architecture Diagram
-
-The following diagram illustrates the complete architecture discussed throughout this article.
-
-![Complete Enterprise Architecture](Microsoft%20Entra.png)
-
----
-
-# Why Do We Need This Architecture?
-
-Imagine building a healthcare application where doctors log in to view patient information. The application must verify the doctor's identity, ensure they have permission to access patient records, securely communicate with multiple backend services, and run reliably even when thousands of users are online.
-
-To achieve this, enterprise applications rely on several specialized components instead of placing all responsibilities inside a single application.
-
----
-
-# Development & Deployment Pipeline
-
-The software development lifecycle begins when developers write code using technologies such as React for the frontend and Node.js for backend APIs. Once the code is committed to GitHub, an automated CI/CD pipeline takes over.
-
-GitHub Actions builds the application, executes automated tests, creates Docker images, and publishes those images to a container registry. Whenever a new image version is available, Kubernetes deployment manifests are updated in Git, allowing Argo CD to detect the changes automatically.
-
-Using the GitOps approach, Argo CD continuously compares the desired state stored in Git with the current state running inside Google Kubernetes Engine (GKE). If differences exist, Argo CD synchronizes the cluster by deploying the latest application version without manual intervention.
-
-This automation ensures deployments remain consistent, repeatable, and easy to audit.
-
----
-
-# User Authentication with Microsoft Entra ID
-
-When a user opens the React application, they are not authenticated directly by the application itself. Instead, the application redirects the user to Microsoft Entra ID through the Microsoft Authentication Library (MSAL).
-
-Microsoft Entra verifies the user's identity by checking their credentials and organizational policies. After successful authentication, Entra returns an ID Token and an Access Token to the application.
-
-The ID Token contains information about the signed-in user, such as their name and email address, allowing the frontend to personalize the user experience. The Access Token is then used whenever the application communicates with backend APIs.
-
-This separation keeps user authentication centralized and significantly improves security.
-
----
-
-# Secure API Communication
-
-Whenever the frontend needs patient information, it sends the Access Token in the HTTP Authorization header.
-
-Before the request reaches the backend service, it passes through Apigee, which acts as the organization's API Gateway.
-
-Apigee performs several important responsibilities:
-
-- Validates incoming tokens
-- Applies security policies
-- Routes requests
-- Logs API traffic
-- Enforces rate limits
-
-Only valid requests continue to the backend services, helping protect internal APIs from unauthorized access.
-
----
-
-# JWT Validation and Authorization
-
-Receiving an Access Token is only the first step. Every backend API must independently verify that the token is genuine before trusting the request.
-
-Middleware inside the Patient API validates the JWT signature, issuer, audience, expiration time, and overall token integrity. If any validation fails, the API immediately returns a **401 Unauthorized** response.
-
-Once the token has been successfully authenticated, the application checks whether the user has the required permissions. These permissions are represented by OAuth scopes such as **Patient.Read** or **Patient.Write**.
-
-If the user lacks the required scope, the API returns **403 Forbidden**, indicating that the user's identity is valid but they are not authorized to perform the requested action.
-
----
-
-# Communication Between APIs
-
-Enterprise systems rarely consist of a single backend service. Instead, one API often depends on another.
-
-In this architecture, the Patient API may need additional information from the Insurance API. However, the original Access Token cannot simply be forwarded because it was issued specifically for the Patient API.
-
-To solve this problem, the Patient API uses the **On-Behalf-Of (OBO)** flow.
-
-Microsoft Entra exchanges the original token for a new Access Token whose audience is the Insurance API while still representing the same authenticated user. This allows backend services to communicate securely without exposing user credentials.
-
----
-
-# Service-to-Service Authentication
-
-Not every request originates from a user.
-
-Background jobs, scheduled tasks, and automated services also need secure access to APIs.
-
-These workloads authenticate using the **Client Credentials Flow**, where the application identifies itself using one of the following methods:
-
-- Client Secret
-- X.509 Certificate
-- Federated Credential
-
-Instead of user permissions (Scopes), these tokens contain **Application Roles**, allowing backend services to communicate securely without user interaction.
-
----
-
-# Federated Credentials
-
-Traditionally, applications stored client secrets that required regular rotation and secure storage.
-
-Modern cloud platforms instead support **Federated Credentials**, allowing Microsoft Entra to trust external identity providers such as GitHub Actions or Google Cloud.
-
-When GitHub Actions or Google Cloud presents a trusted identity token, Microsoft Entra validates predefined trust rules, including the repository, branch, workflow, issuer, and subject claims. If everything matches, Entra issues a Microsoft Access Token without requiring stored secrets.
-
-This approach greatly improves security while reducing operational overhead.
-
----
-
-# Running on Kubernetes
-
-Once deployed, the application runs inside Google Kubernetes Engine (GKE).
-
-Kubernetes automatically manages application availability by creating multiple replicas of each service. If a container crashes, Kubernetes replaces it automatically. During deployments, Kubernetes performs rolling updates, allowing new versions to be released without downtime.
-
-This provides scalability, resilience, and high availability for enterprise applications.
-
----
-
-# End-to-End Request Flow
-
-From the user's perspective, the process is straightforward.
-
-A user signs in using Microsoft Entra, receives an Access Token, calls backend APIs through Apigee, and receives data in response.
-
-Behind the scenes, multiple components collaborate to authenticate the user, validate tokens, authorize requests, exchange tokens between APIs, and securely retrieve information from databases—all without exposing credentials or compromising security.
-
----
-
-# Conclusion
-
-Although enterprise architectures may initially appear complex, each component has a clearly defined responsibility.
-
-- Microsoft Entra authenticates users.
-- MSAL acquires and manages tokens.
-- Apigee protects and routes APIs.
-- Backend services validate JWTs and enforce authorization.
-- GitHub Actions automates builds.
-- Argo CD continuously deploys applications using GitOps.
-- Kubernetes provides a resilient runtime environment.
-- Federated Credentials eliminate the need for stored secrets.
-
-When viewed together, these technologies form a secure, scalable, and maintainable architecture suitable for modern cloud-native enterprise applications.
-
----
-`,C=`---
+`,E=`---
 id: jwt-token-architecture
 title: Microsoft Entra - JWT Token Architecture
 description: Learn what a JSON Web Token (JWT) is, how it is structured, and what claims Microsoft Entra includes in the tokens it issues.
@@ -5094,7 +4940,7 @@ A JWT is a compact, self-contained token made of a header, payload, and signatur
 - JWT payloads are encoded, not encrypted — never store secrets in claims.
 - ID Tokens identify the user; Access Tokens authorize API calls.
 - Trusting a JWT's claims requires verifying its signature, covered in the next article.
-`,P=`---
+`,C=`---
 id: microsoft-graph
 title: Microsoft Entra - Microsoft Graph
 description: Learn how Microsoft Graph provides a unified REST API to access Microsoft Entra ID, Microsoft 365, and Azure resources using secure OAuth 2.0 authentication and Microsoft Entra access tokens.
@@ -6159,7 +6005,7 @@ By supporting consistent REST endpoints, OData query options, SDKs, and enterpri
 - Applications should handle pagination and throttling correctly.
 - Official SDKs simplify authentication, request construction, and response handling.
 - Always request the minimum permissions required and securely manage Access Tokens.
-`,I=`---
+`,P=`---
 id: oauth-2.0
 title: Microsoft Entra - OAuth 2.0 & OpenID Connect (OIDC)
 description: Learn how OAuth 2.0 and OpenID Connect (OIDC) work together in Microsoft Entra to provide secure authorization, authentication, and token-based access to applications and APIs.
@@ -6559,7 +6405,7 @@ Together they power secure sign-in, Single Sign-On, API access, and modern cloud
 - ID Tokens identify users.
 - Access Tokens authorize API access.
 - Refresh Tokens renew sessions without requiring users to sign in again.
-`,R=`---
+`,I=`---
 id: oauth-flow-comparison
 title: Microsoft Entra - OAuth 2.0 Flow Comparison
 description: Learn the different OAuth 2.0 authorization flows supported by Microsoft Entra, understand when to use each flow, and choose the right authentication pattern for your application.
@@ -6937,7 +6783,7 @@ Choosing the correct flow ensures secure authentication, proper authorization, a
 - Device Code supports devices without browsers.
 - Refresh Tokens provide silent token renewal.
 - Avoid Implicit and ROPC for new applications.
-`,x=`---
+`,R=`---
 id: permissions-and-consent
 title: Microsoft Entra - Permissions & Consent
 description: Learn how Microsoft Entra permissions and consent work, including delegated permissions, application permissions, user consent, administrator consent, scopes, and best practices for securely accessing protected resources.
@@ -7834,7 +7680,7 @@ By requesting only the permissions an application needs, regularly reviewing gra
 - Resource-Specific Consent (RSC) enables least-privilege access to supported resources.
 - Organizations should regularly review, audit, and revoke unnecessary permissions.
 - Following the principle of least privilege is essential for securing Microsoft Entra applications.
-`,D=`# Pods
+`,x=`# Pods
 
 A Pod is the smallest deployable unit in Kubernetes — a group of one or more containers that share storage and network resources.
 
@@ -7860,7 +7706,7 @@ spec:
 \`\`\`
 
 > Pods are rarely created directly in production — use a Deployment or StatefulSet instead so Kubernetes can reschedule and heal them automatically.
-`,O="/assets/app-registration-service-principal-CnEiIKLe.png",z="/assets/authorization-code-flow-pkce-CIAq4_od.png",W="/assets/complete-enterprise-authentication-architecture-RMUF3Whu.png",q="/assets/conditional-access-Bp7ftwOY.png",G="/assets/core-architecture-Chr34MGd.png",U="/assets/cryptography-deep-dive-DY15AeDm.png",F="/assets/identity-fundamentals.png-C4FlPPsW.png",K="/assets/Microsoft%20Entra-Ht2LSfbq.png",J="/assets/jwt-token-architecture-DqP0CDGp.png",B="/assets/microsoft-graph-8eVtnoew.png",L="/assets/oauth-2.0-openid-connect-BRyZamBt.png",_="/assets/oauth-flow-comparison-D4-Tq1tq.png",H="/assets/permissions-consent-BnlAROzq.png",j=`id: entra-auth
+`,O="/assets/app-registration-service-principal-CnEiIKLe.png",D="/assets/authorization-code-flow-pkce-CIAq4_od.png",z="/assets/complete-enterprise-authentication-architecture-RMUF3Whu.png",W="/assets/conditional-access-Bp7ftwOY.png",q="/assets/core-architecture-Chr34MGd.png",U="/assets/cryptography-deep-dive-DY15AeDm.png",G="/assets/identity-fundamentals.png-C4FlPPsW.png",F="/assets/jwt-token-architecture-DqP0CDGp.png",K="/assets/microsoft-graph-8eVtnoew.png",J="/assets/oauth-2.0-openid-connect-BRyZamBt.png",B="/assets/oauth-flow-comparison-D4-Tq1tq.png",L="/assets/permissions-consent-BnlAROzq.png",_=`id: entra-auth
 title: Microsoft Entra Authentication
 description: End-to-end Microsoft Entra learning path.
 articles:
@@ -7876,4 +7722,4 @@ articles:
   - permissions-and-consent
   - conditional-access
   - complete-enterprise-authentication-architecture
-`,m=t=>{const e={},n=t.split(/\r?\n/),s=o=>o.trim().replace(/^["']|["']$/g,"");let i=0;for(;i<n.length;){const a=n[i].match(/^([a-zA-Z0-9_-]+):\s*(.*)$/);if(!a){i+=1;continue}const[,c,r]=a;if(r.trim()===""){const d=[];let h=i+1;for(;h<n.length;){const u=n[h].match(/^\s*-\s*(.+)$/);if(!u)break;d.push(s(u[1])),h+=1}if(d.length>0){e[c]=d,i=h;continue}i+=1;continue}if(/^\[.*\]$/.test(r.trim())){e[c]=r.trim().replace(/^\[|\]$/g,"").split(",").map(s).filter(Boolean),i+=1;continue}e[c]=s(r),i+=1}return e},N=200,V=t=>{const e=t.trim().split(/\s+/).filter(Boolean).length;return Math.max(1,Math.round(e/N))},$=/content\/([^/]+)\/(.+)\/index\.md$/,Z=/content\/([^/]+)\/(.+)\/images\/([^/]+)$/,f=t=>t.split("-").filter(Boolean).map(e=>e.charAt(0).toUpperCase()+e.slice(1)).join(" "),Q=/^---\r?\n([\s\S]*?)\r?\n---\r?\n?/,Y=t=>{const e=t.match(Q);if(!e)return{body:t};const n=t.slice(e[0].length),s=m(e[1]),i=a=>Array.isArray(a)?void 0:a,o=a=>Array.isArray(a)?a:void 0;return{id:i(s.id),title:i(s.title),description:i(s.description),learningPath:i(s.learningPath),tags:o(s.tags),body:n}},X=(t,e)=>{const n=t.match(/^#\s+(.+)$/m);return n?n[1].trim():f(e)},nn=t=>{const n=t.replace(/^#\s+.+$/m,"").trim().split(/\n\s*\n/).map(i=>i.trim()).find(i=>i.length>0&&!i.startsWith("#")&&!i.startsWith("!["));if(!n)return"";const s=n.replace(/[*_`]/g,"").replace(/\s+/g," ").trim();return s.length>140?`${s.slice(0,137)}...`:s},en=Object.assign({"../../../../content/azure/entra-auth/app-registration/index.md":v,"../../../../content/azure/entra-auth/authorization-code-flow/index.md":w,"../../../../content/azure/entra-auth/complete-enterprise-authentication-architecture/index.md":b,"../../../../content/azure/entra-auth/conditional-access/index.md":k,"../../../../content/azure/entra-auth/core-architecture/index.md":T,"../../../../content/azure/entra-auth/cryptography/index.md":M,"../../../../content/azure/entra-auth/identity-fundamentals/index.md":S,"../../../../content/azure/entra-auth/index.md":E,"../../../../content/azure/entra-auth/jwt-token-architecture/index.md":C,"../../../../content/azure/entra-auth/microsoft-graph/index.md":P,"../../../../content/azure/entra-auth/oauth-2.0/index.md":I,"../../../../content/azure/entra-auth/oauth-flow-comparison/index.md":R,"../../../../content/azure/entra-auth/permissions-and-consent/index.md":x,"../../../../content/kubernetes/pods/index.md":D}),tn=Object.assign({"../../../../content/azure/entra-auth/app-registration/images/app-registration-service-principal.png":O,"../../../../content/azure/entra-auth/authorization-code-flow/images/authorization-code-flow-pkce.png":z,"../../../../content/azure/entra-auth/complete-enterprise-authentication-architecture/images/complete-enterprise-authentication-architecture.png":W,"../../../../content/azure/entra-auth/conditional-access/images/conditional-access.png":q,"../../../../content/azure/entra-auth/core-architecture/images/core-architecture.png":G,"../../../../content/azure/entra-auth/cryptography/images/cryptography-deep-dive.png":U,"../../../../content/azure/entra-auth/identity-fundamentals/images/identity-fundamentals.png.png":F,"../../../../content/azure/entra-auth/images/Microsoft Entra.png":K,"../../../../content/azure/entra-auth/jwt-token-architecture/images/jwt-token-architecture.png":J,"../../../../content/azure/entra-auth/microsoft-graph/images/microsoft-graph.png":B,"../../../../content/azure/entra-auth/oauth-2.0/images/oauth-2.0-openid-connect.png":L,"../../../../content/azure/entra-auth/oauth-flow-comparison/images/oauth-flow-comparison.png":_,"../../../../content/azure/entra-auth/permissions-and-consent/images/permissions-consent.png":H}),sn=Object.assign({"../../../../learning-paths/entra-auth.yaml":j}),on=(t,e)=>{const n={};for(const[s,i]of Object.entries(tn)){const o=s.match(Z);if(!o)continue;const[,a,c,r]=o;a===t&&c===e&&(n[r]=i)}return n},l=Object.entries(en).map(([t,e])=>{const n=t.match($);if(!n)return null;const[,s,i]=n,o=i.split("/").pop()??i,{id:a,title:c,description:r,learningPath:d,tags:h,body:u}=Y(e);return{slug:i,categorySlug:s,title:c??X(u,o),description:r??nn(u),tags:h??[],url:`/learning/${s}/${i}`,id:a??i,learningPathId:d,readingTimeMinutes:V(u),content:u,images:on(s,i)}}).filter(t=>t!==null).sort((t,e)=>t.title.localeCompare(e.title)),g=(()=>{const t=new Map;for(const e of Object.values(sn)){const n=m(e),s=typeof n.id=="string"?n.id:void 0,i=typeof n.title=="string"?n.title:void 0,o=Array.isArray(n.articles)?n.articles:void 0;!s||!i||!o||t.set(s,{id:s,title:i,description:typeof n.description=="string"?n.description:"",articles:o})}return t})();for(const t of g.values())for(const e of t.articles)l.some(s=>s.id===e)||console.error(`Learning path "${t.id}" references unknown article id "${e}".`);const an=(()=>{const t=new Map;for(const e of l){const n=t.get(e.categorySlug);if(n){n.articleCount+=1;continue}const s=f(e.categorySlug);t.set(e.categorySlug,{slug:e.categorySlug,title:s,description:`${s} notes and articles.`,articleCount:1})}return Array.from(t.values()).sort((e,n)=>e.title.localeCompare(n.title))})(),dn=()=>l,rn=()=>an,y=(t,e)=>l.find(n=>n.categorySlug===t&&n.slug===e),un=t=>g.get(t),hn=(t,e)=>{const n=y(t,e),s=n!=null&&n.learningPathId?g.get(n.learningPathId):void 0;if(!n||!s)return null;const i=s.articles.indexOf(n.id);return i===-1?null:{path:s,position:i+1,total:s.articles.length}},gn=(t,e)=>{const n=y(t,e),s=n!=null&&n.learningPathId?g.get(n.learningPathId):void 0;if(n&&s){const o=s.articles,a=o.indexOf(n.id),c=r=>r?l.find(d=>d.id===r)??null:null;if(a!==-1)return{previous:a>0?c(o[a-1]):null,next:a<o.length-1?c(o[a+1]):null}}const i=l.findIndex(o=>o.categorySlug===t&&o.slug===e);return i===-1?{previous:null,next:null}:{previous:i>0?l[i-1]:null,next:i<l.length-1?l[i+1]:null}},mn=rn();export{pn as L,rn as a,gn as b,mn as c,hn as d,un as e,y as f,dn as g};
+`,m=t=>{const e={},n=t.split(/\r?\n/),s=o=>o.trim().replace(/^["']|["']$/g,"");let i=0;for(;i<n.length;){const a=n[i].match(/^([a-zA-Z0-9_-]+):\s*(.*)$/);if(!a){i+=1;continue}const[,c,r]=a;if(r.trim()===""){const d=[];let h=i+1;for(;h<n.length;){const u=n[h].match(/^\s*-\s*(.+)$/);if(!u)break;d.push(s(u[1])),h+=1}if(d.length>0){e[c]=d,i=h;continue}i+=1;continue}if(/^\[.*\]$/.test(r.trim())){e[c]=r.trim().replace(/^\[|\]$/g,"").split(",").map(s).filter(Boolean),i+=1;continue}e[c]=s(r),i+=1}return e},H=200,j=t=>{const e=t.trim().split(/\s+/).filter(Boolean).length;return Math.max(1,Math.round(e/H))},N=/content\/([^/]+)\/(.+)\/index\.md$/,V=/content\/([^/]+)\/(.+)\/images\/([^/]+)$/,f=t=>t.split("-").filter(Boolean).map(e=>e.charAt(0).toUpperCase()+e.slice(1)).join(" "),$=/^---\r?\n([\s\S]*?)\r?\n---\r?\n?/,Z=t=>{const e=t.match($);if(!e)return{body:t};const n=t.slice(e[0].length),s=m(e[1]),i=a=>Array.isArray(a)?void 0:a,o=a=>Array.isArray(a)?a:void 0;return{id:i(s.id),title:i(s.title),description:i(s.description),learningPath:i(s.learningPath),tags:o(s.tags),body:n}},Q=(t,e)=>{const n=t.match(/^#\s+(.+)$/m);return n?n[1].trim():f(e)},Y=t=>{const n=t.replace(/^#\s+.+$/m,"").trim().split(/\n\s*\n/).map(i=>i.trim()).find(i=>i.length>0&&!i.startsWith("#")&&!i.startsWith("!["));if(!n)return"";const s=n.replace(/[*_`]/g,"").replace(/\s+/g," ").trim();return s.length>140?`${s.slice(0,137)}...`:s},X=Object.assign({"../../../../content/azure/entra-auth/app-registration/index.md":v,"../../../../content/azure/entra-auth/authorization-code-flow/index.md":w,"../../../../content/azure/entra-auth/complete-enterprise-authentication-architecture/index.md":b,"../../../../content/azure/entra-auth/conditional-access/index.md":T,"../../../../content/azure/entra-auth/core-architecture/index.md":k,"../../../../content/azure/entra-auth/cryptography/index.md":M,"../../../../content/azure/entra-auth/identity-fundamentals/index.md":S,"../../../../content/azure/entra-auth/jwt-token-architecture/index.md":E,"../../../../content/azure/entra-auth/microsoft-graph/index.md":C,"../../../../content/azure/entra-auth/oauth-2.0/index.md":P,"../../../../content/azure/entra-auth/oauth-flow-comparison/index.md":I,"../../../../content/azure/entra-auth/permissions-and-consent/index.md":R,"../../../../content/kubernetes/pods/index.md":x}),nn=Object.assign({"../../../../content/azure/entra-auth/app-registration/images/app-registration-service-principal.png":O,"../../../../content/azure/entra-auth/authorization-code-flow/images/authorization-code-flow-pkce.png":D,"../../../../content/azure/entra-auth/complete-enterprise-authentication-architecture/images/complete-enterprise-authentication-architecture.png":z,"../../../../content/azure/entra-auth/conditional-access/images/conditional-access.png":W,"../../../../content/azure/entra-auth/core-architecture/images/core-architecture.png":q,"../../../../content/azure/entra-auth/cryptography/images/cryptography-deep-dive.png":U,"../../../../content/azure/entra-auth/identity-fundamentals/images/identity-fundamentals.png.png":G,"../../../../content/azure/entra-auth/jwt-token-architecture/images/jwt-token-architecture.png":F,"../../../../content/azure/entra-auth/microsoft-graph/images/microsoft-graph.png":K,"../../../../content/azure/entra-auth/oauth-2.0/images/oauth-2.0-openid-connect.png":J,"../../../../content/azure/entra-auth/oauth-flow-comparison/images/oauth-flow-comparison.png":B,"../../../../content/azure/entra-auth/permissions-and-consent/images/permissions-consent.png":L}),en=Object.assign({"../../../../learning-paths/entra-auth.yaml":_}),tn=(t,e)=>{const n={};for(const[s,i]of Object.entries(nn)){const o=s.match(V);if(!o)continue;const[,a,c,r]=o;a===t&&c===e&&(n[r]=i)}return n},l=Object.entries(X).map(([t,e])=>{const n=t.match(N);if(!n)return null;const[,s,i]=n,o=i.split("/").pop()??i,{id:a,title:c,description:r,learningPath:d,tags:h,body:u}=Z(e);return{slug:i,categorySlug:s,title:c??Q(u,o),description:r??Y(u),tags:h??[],url:`/learning/${s}/${i}`,id:a??i,learningPathId:d,readingTimeMinutes:j(u),content:u,images:tn(s,i)}}).filter(t=>t!==null).sort((t,e)=>t.title.localeCompare(e.title)),g=(()=>{const t=new Map;for(const e of Object.values(en)){const n=m(e),s=typeof n.id=="string"?n.id:void 0,i=typeof n.title=="string"?n.title:void 0,o=Array.isArray(n.articles)?n.articles:void 0;!s||!i||!o||t.set(s,{id:s,title:i,description:typeof n.description=="string"?n.description:"",articles:o})}return t})();for(const t of g.values())for(const e of t.articles)l.some(s=>s.id===e)||console.error(`Learning path "${t.id}" references unknown article id "${e}".`);const sn=(()=>{const t=new Map;for(const e of l){const n=t.get(e.categorySlug);if(n){n.articleCount+=1;continue}const s=f(e.categorySlug);t.set(e.categorySlug,{slug:e.categorySlug,title:s,description:`${s} notes and articles.`,articleCount:1})}return Array.from(t.values()).sort((e,n)=>e.title.localeCompare(n.title))})(),ln=()=>l,on=()=>sn,y=(t,e)=>l.find(n=>n.categorySlug===t&&n.slug===e),pn=t=>g.get(t),dn=(t,e)=>{const n=y(t,e),s=n!=null&&n.learningPathId?g.get(n.learningPathId):void 0;if(!n||!s)return null;const i=s.articles.indexOf(n.id);return i===-1?null:{path:s,position:i+1,total:s.articles.length}},un=(t,e)=>{const n=y(t,e),s=n!=null&&n.learningPathId?g.get(n.learningPathId):void 0;if(n&&s){const o=s.articles,a=o.indexOf(n.id),c=r=>r?l.find(d=>d.id===r)??null:null;if(a!==-1)return{previous:a>0?c(o[a-1]):null,next:a<o.length-1?c(o[a+1]):null}}const i=l.findIndex(o=>o.categorySlug===t&&o.slug===e);return i===-1?{previous:null,next:null}:{previous:i>0?l[i-1]:null,next:i<l.length-1?l[i+1]:null}},hn=on();export{cn as L,on as a,un as b,hn as c,dn as d,pn as e,y as f,ln as g};
