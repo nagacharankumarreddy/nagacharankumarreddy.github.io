@@ -1,4 +1,4 @@
-import{j as p,C as A}from"./index-Bg8udfb8.js";const cn=({title:t,subtitle:e,beforeTitle:n,sidebar:s,children:i})=>{const o=p.jsxs(p.Fragment,{children:[p.jsx("h1",{children:t}),e&&p.jsx("p",{className:"learning-hub-subtitle",children:e}),i]});return p.jsx("section",{className:"learning-hub",id:"learning-hub",children:p.jsxs(A,{children:[n,s?p.jsxs("div",{className:"learning-hub-with-sidebar",children:[s,p.jsx("div",{children:o})]}):o]})})},v=`---
+import{j as p,C as A}from"./index-Cb_543cX.js";const cn=({title:t,subtitle:e,beforeTitle:n,sidebar:s,children:i})=>{const o=p.jsxs(p.Fragment,{children:[p.jsx("h1",{children:t}),e&&p.jsx("p",{className:"learning-hub-subtitle",children:e}),i]});return p.jsx("section",{className:"learning-hub",id:"learning-hub",children:p.jsxs(A,{children:[n,s?p.jsxs("div",{className:"learning-hub-with-sidebar",children:[s,p.jsx("div",{children:o})]}):o]})})},v=`---
 id: app-registration
 title: Microsoft Entra - App Registration & Service Principal
 description: Learn how applications are registered in Microsoft Entra, how Service Principals are created, and how Enterprise Applications manage access within a tenant.
