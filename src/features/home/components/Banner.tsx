@@ -12,8 +12,10 @@ import {
 import TrackVisibility from "react-on-screen";
 import { HashLink } from "react-router-hash-link";
 import headerImg from "../../../assets/img/charanbw.png";
+import { useMagneticButton } from "../../cursor/useMagneticButton";
 
 export const Banner = () => {
+  const magneticRef = useMagneticButton<HTMLAnchorElement>();
   const [loopNum, setLoopNum] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
   const [text, setText] = useState("");
@@ -85,7 +87,7 @@ export const Banner = () => {
                     deliver impactful, user-focused solutions.
                   </p>
                   <div className="banner-actions">
-                    <HashLink to="/#project" className="btn-gradient">
+                    <HashLink to="/#project" className="btn-gradient" ref={magneticRef}>
                       <span>View Projects</span>
                       <FaArrowRight />
                     </HashLink>

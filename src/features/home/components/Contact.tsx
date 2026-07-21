@@ -4,6 +4,7 @@ import type { ChangeEvent, FormEvent } from "react";
 import { Col, Container, Row } from "react-bootstrap";
 import { FaEnvelope, FaPhoneAlt } from "react-icons/fa";
 import contactImg from "../../../assets/img/contact-img.svg";
+import { useMagneticButton } from "../../cursor/useMagneticButton";
 import { emailJsConfig } from "../../../lib/env";
 
 interface ContactFormData {
@@ -17,6 +18,7 @@ interface ContactFormData {
 type SendState = "idle" | "sending" | "success" | "error";
 
 export const Contact = () => {
+  const magneticRef = useMagneticButton<HTMLButtonElement>();
   const [formData, setFormData] = useState<ContactFormData>({
     from_name: "",
     from_email: "",
@@ -123,6 +125,7 @@ export const Contact = () => {
                   </Col>
                   <Col xs={12}>
                     <button
+                      ref={magneticRef}
                       type="submit"
                       className="btn-gradient"
                       disabled={sendState === "sending"}

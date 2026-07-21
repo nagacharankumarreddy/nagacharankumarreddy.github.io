@@ -1,0 +1,144 @@
+@media (pointer: fine) {
+  html,
+  body {
+    cursor: none;
+  }
+
+  a,
+  button,
+  input,
+  textarea,
+  [class*="btn"],
+  [class*="card"] {
+    cursor: none;
+  }
+}
+
+.custom-cursor-dot,
+.custom-cursor-trail {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 2147483647;
+  border-radius: 50%;
+  will-change: transform;
+  transform: translate3d(-9999px, -9999px, 0);
+}
+
+.custom-cursor-dot {
+  width: 14px;
+  height: 14px;
+  margin: -7px 0 0 -7px;
+  background: #61dafb;
+  box-shadow:
+    0 0 12px 2px rgba(97, 218, 251, 0.7),
+    0 0 24px 6px rgba(74, 47, 189, 0.4);
+  transition:
+    width 0.2s ease,
+    height 0.2s ease,
+    margin 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease,
+    border 0.2s ease;
+}
+
+.custom-cursor-trail {
+  width: 34px;
+  height: 34px;
+  margin: -17px 0 0 -17px;
+  border: 1px solid rgba(97, 218, 251, 0.3);
+  transition:
+    width 0.2s ease,
+    height 0.2s ease,
+    margin 0.2s ease,
+    opacity 0.2s ease;
+}
+
+/* Button: grows, glow increases */
+.custom-cursor-dot[data-cursor-state="button"] {
+  width: 22px;
+  height: 22px;
+  margin: -11px 0 0 -11px;
+  box-shadow:
+    0 0 20px 4px rgba(97, 218, 251, 0.9),
+    0 0 36px 10px rgba(74, 47, 189, 0.6);
+}
+.custom-cursor-trail[data-cursor-state="button"] {
+  width: 44px;
+  height: 44px;
+  margin: -22px 0 0 -22px;
+}
+
+/* Link: thin ring */
+.custom-cursor-dot[data-cursor-state="link"] {
+  width: 24px;
+  height: 24px;
+  margin: -12px 0 0 -12px;
+  background: transparent;
+  border: 1.5px solid #61dafb;
+  box-shadow: 0 0 10px 2px rgba(97, 218, 251, 0.5);
+}
+
+/* Card: slight scale */
+.custom-cursor-dot[data-cursor-state="card"] {
+  width: 18px;
+  height: 18px;
+  margin: -9px 0 0 -9px;
+}
+
+/* Code block: </> indicator */
+.custom-cursor-dot[data-cursor-state="code"] {
+  width: 28px;
+  height: 28px;
+  margin: -14px 0 0 -14px;
+  background: rgba(18, 18, 18, 0.85);
+  border: 1px solid rgba(97, 218, 251, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.custom-cursor-dot[data-cursor-state="code"]::after {
+  content: "</>";
+  font-size: 8px;
+  font-weight: 700;
+  color: #61dafb;
+}
+
+/* Architecture image: zoom indicator */
+.custom-cursor-dot[data-cursor-state="image"] {
+  width: 28px;
+  height: 28px;
+  margin: -14px 0 0 -14px;
+  background: rgba(18, 18, 18, 0.85);
+  border: 1px solid rgba(97, 218, 251, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.custom-cursor-dot[data-cursor-state="image"]::after {
+  content: "+";
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  color: #61dafb;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .custom-cursor-dot,
+  .custom-cursor-trail {
+    transition: none;
+  }
+}
+
+@media (pointer: coarse) {
+  .custom-cursor-dot,
+  .custom-cursor-trail {
+    display: none;
+  }
+
+  html,
+  body {
+    cursor: auto;
+  }
+}
