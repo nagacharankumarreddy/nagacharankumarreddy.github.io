@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import type { ReactNode } from "react";
 import {
   FaCss3Alt,
@@ -76,14 +77,31 @@ export const Skills = () => {
               {categories.map((category) => (
                 <div key={category.title} className="category">
                   <h3>{category.title}</h3>
-                  <div className="skill-grid">
+                  <motion.div
+                    className="skill-grid"
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, amount: 0.3 }}
+                    variants={{
+                      hidden: {},
+                      visible: { transition: { staggerChildren: 0.05 } },
+                    }}
+                  >
                     {category.skills.map((skill) => (
-                      <div className="skill-card" key={skill.name}>
+                      <motion.div
+                        className="skill-card"
+                        key={skill.name}
+                        variants={{
+                          hidden: { opacity: 0, y: 16, scale: 0.9 },
+                          visible: { opacity: 1, y: 0, scale: 1 },
+                        }}
+                        transition={{ duration: 0.35, ease: "easeOut" }}
+                      >
                         <div className="skill-icon">{skill.icon}</div>
                         <span>{skill.name}</span>
-                      </div>
+                      </motion.div>
                     ))}
-                  </div>
+                  </motion.div>
                 </div>
               ))}
             </div>

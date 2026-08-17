@@ -6,11 +6,14 @@
 
   a,
   button,
-  input,
-  textarea,
   [class*="btn"],
   [class*="card"] {
     cursor: none;
+  }
+
+  input,
+  textarea {
+    cursor: text;
   }
 }
 

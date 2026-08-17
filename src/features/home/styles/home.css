@@ -92,32 +92,68 @@ p.success {
 p.danger {
   color: red;
 }
+/************ Scroll Progress Bar ************/
+.scroll-progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  transform-origin: 0% 50%;
+  background: linear-gradient(90.21deg, #aa367c -5.91%, #4a2fbd 111.58%);
+  z-index: 10001;
+}
+
 /************ Navbar Css ************/
 nav.navbar {
   position: fixed;
   width: 100%;
   top: 0;
   z-index: 9999;
-  transition: 0.32s ease-in-out;
+  padding: 20px 0;
+  transition:
+    padding 0.32s ease-in-out,
+    background-color 0.32s ease-in-out,
+    box-shadow 0.32s ease-in-out;
 }
 nav.navbar.scrolled {
   padding: 0px 0;
   background-color: var(--color-bg);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 nav.navbar a.navbar-brand {
   width: 9%;
 }
 nav.navbar .navbar-nav .nav-link.navbar-link {
+  position: relative;
   font-weight: 400;
   color: var(--color-text) !important;
   letter-spacing: 0.8px;
   padding: 0 25px;
   font-size: 18px;
   opacity: 0.75;
+  transition: opacity 0.25s ease;
 }
 nav.navbar .navbar-nav a.nav-link.navbar-link:hover,
 nav.navbar .navbar-nav a.nav-link.navbar-link.active {
   opacity: 1;
+}
+nav.navbar .navbar-nav .nav-link.navbar-link::after {
+  content: "";
+  position: absolute;
+  left: 25px;
+  right: 25px;
+  bottom: -4px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90.21deg, #aa367c -5.91%, #4a2fbd 111.58%);
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 0.3s ease;
+}
+nav.navbar .navbar-nav a.nav-link.navbar-link:hover::after,
+nav.navbar .navbar-nav a.nav-link.navbar-link.active::after {
+  transform: scaleX(1);
 }
 span.navbar-text {
   display: flex;

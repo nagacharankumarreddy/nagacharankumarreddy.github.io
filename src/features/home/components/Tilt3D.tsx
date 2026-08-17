@@ -30,6 +30,7 @@ export const Tilt3D = ({
   const glareY = useSpring(useTransform(y, [0, 1], [0, 100]), springConfig);
 
   const handlePointerMove = (event: PointerEvent<HTMLDivElement>) => {
+    if (event.pointerType === "touch") return;
     const bounds = event.currentTarget.getBoundingClientRect();
     x.set((event.clientX - bounds.left) / bounds.width);
     y.set((event.clientY - bounds.top) / bounds.height);
@@ -40,11 +41,23 @@ export const Tilt3D = ({
     y.set(0.5);
   };
 
+  // Touch devices can't hover to drive the tilt, so tapping instead
+  // triggers a quick 3D pop for the same sense of depth/feedback.
+  const handleTouchStart = (event: PointerEvent<HTMLDivElement>) => {
+    if (event.pointerType !== "touch") return;
+    const bounds = event.currentTarget.getBoundingClientRect();
+    x.set((event.clientX - bounds.left) / bounds.width);
+    y.set((event.clientY - bounds.top) / bounds.height);
+  };
+
   return (
     <motion.div
       className={className}
       onPointerMove={handlePointerMove}
+      onPointerDown={handleTouchStart}
       onPointerLeave={handlePointerLeave}
+      onPointerUp={handlePointerLeave}
+      whileTap={{ scale: 0.97 }}
       style={{
         rotateX,
         rotateY,

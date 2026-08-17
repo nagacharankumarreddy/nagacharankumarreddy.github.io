@@ -1,9 +1,5 @@
-import "animate.css";
-import AOS from "aos";
-import "aos/dist/aos.css";
-import { useEffect } from "react";
+import { motion } from "framer-motion";
 import { Col, Container, Row } from "react-bootstrap";
-import TrackVisibility from "react-on-screen";
 import calculator from "../../../assets/img/calculator.png";
 import colorSharp2 from "../../../assets/img/color-sharp2.png";
 import dice from "../../../assets/img/dice.png";
@@ -105,32 +101,41 @@ const projects: Project[] = [
 ];
 
 export const Projects = () => {
-  useEffect(() => {
-    AOS.init({ duration: 1500 });
-  }, []);
-
   return (
     <section className="project" id="project">
       <Container>
         <Row>
           <Col size={12}>
-            <TrackVisibility>
-              {({ isVisible }) => (
-                <div
-                  className={
-                    isVisible ? "animate__animated animate__fadeIn" : ""
-                  }
-                >
-                  <h2>Projects</h2>
-                  <p>A selection of things I've built</p>
-                  <Row>
-                    {projects.map((project, index) => (
-                      <ProjectCard key={index} {...project} />
-                    ))}
-                  </Row>
-                </div>
-              )}
-            </TrackVisibility>
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.6 }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
+            >
+              Projects
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.6 }}
+              transition={{ duration: 0.5, delay: 0.1, ease: "easeOut" }}
+            >
+              A selection of things I've built
+            </motion.p>
+            <Row
+              as={motion.div}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.1 }}
+              variants={{
+                hidden: {},
+                visible: { transition: { staggerChildren: 0.08 } },
+              }}
+            >
+              {projects.map((project, index) => (
+                <ProjectCard key={index} {...project} />
+              ))}
+            </Row>
           </Col>
         </Row>
       </Container>

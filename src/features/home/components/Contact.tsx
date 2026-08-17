@@ -1,4 +1,5 @@
 import emailjs from "@emailjs/browser";
+import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
 import { Col, Container, Row } from "react-bootstrap";
@@ -6,6 +7,15 @@ import { FaEnvelope, FaPhoneAlt } from "react-icons/fa";
 import contactImg from "../../../assets/img/contact-img.svg";
 import { useMagneticButton } from "../../cursor/useMagneticButton";
 import { emailJsConfig } from "../../../lib/env";
+
+const fieldVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay: i * 0.08, duration: 0.4, ease: "easeOut" as const },
+  }),
+};
 
 interface ContactFormData {
   from_name: string;
@@ -84,7 +94,12 @@ export const Contact = () => {
               <form onSubmit={handleSubmit}>
                 <Row>
                   <Col xs={12} sm={6}>
-                    <input
+                    <motion.input
+                      custom={0}
+                      variants={fieldVariants}
+                      initial="hidden"
+                      whileInView="visible"
+                      viewport={{ once: true, amount: 0.4 }}
                       type="text"
                       name="from_name"
                       value={formData.from_name}
@@ -94,7 +109,12 @@ export const Contact = () => {
                     />
                   </Col>
                   <Col xs={12} sm={6}>
-                    <input
+                    <motion.input
+                      custom={1}
+                      variants={fieldVariants}
+                      initial="hidden"
+                      whileInView="visible"
+                      viewport={{ once: true, amount: 0.4 }}
                       type="email"
                       name="from_email"
                       value={formData.from_email}
@@ -104,7 +124,12 @@ export const Contact = () => {
                     />
                   </Col>
                   <Col xs={12}>
-                    <input
+                    <motion.input
+                      custom={2}
+                      variants={fieldVariants}
+                      initial="hidden"
+                      whileInView="visible"
+                      viewport={{ once: true, amount: 0.4 }}
                       type="text"
                       name="subject"
                       value={formData.subject}
@@ -114,37 +139,64 @@ export const Contact = () => {
                     />
                   </Col>
                   <Col xs={12}>
-                    <textarea
+                    <motion.textarea
+                      custom={3}
+                      variants={fieldVariants}
+                      initial="hidden"
+                      whileInView="visible"
+                      viewport={{ once: true, amount: 0.4 }}
                       name="message"
                       rows={4}
                       value={formData.message}
                       onChange={handleChange}
                       placeholder="Your Message"
                       required
-                    ></textarea>
+                    ></motion.textarea>
                   </Col>
                   <Col xs={12}>
-                    <button
+                    <motion.button
+                      custom={4}
+                      variants={fieldVariants}
+                      initial="hidden"
+                      whileInView="visible"
+                      viewport={{ once: true, amount: 0.4 }}
+                      whileTap={{ scale: 0.96 }}
                       ref={magneticRef}
                       type="submit"
                       className="btn-gradient"
                       disabled={sendState === "sending"}
                     >
                       {sendState === "sending" ? "Sending..." : "Send Message"}
-                    </button>
+                    </motion.button>
                   </Col>
                 </Row>
               </form>
-              {sendState === "success" && (
-                <p className="form-status success">
-                  Message sent successfully! I'll get back to you soon.
-                </p>
-              )}
-              {sendState === "error" && (
-                <p className="form-status error">
-                  Something went wrong. Please try again.
-                </p>
-              )}
+              <AnimatePresence mode="wait">
+                {sendState === "success" && (
+                  <motion.p
+                    key="success"
+                    className="form-status success"
+                    initial={{ opacity: 0, y: -8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    Message sent successfully! I'll get back to you soon.
+                  </motion.p>
+                )}
+                {sendState === "error" && (
+                  <motion.p
+                    key="error"
+                    className="form-status error"
+                    initial={{ opacity: 0, y: -8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    Something went wrong. Please try again.
+                  </motion.p>
+                )}
+              </AnimatePresence>
             </div>
           </Col>
         </Row>

@@ -1,3 +1,4 @@
+import { AnimatePresence, motion } from "framer-motion";
 import type { ReactNode } from "react";
 import { FaDesktop, FaMoon, FaSun } from "react-icons/fa";
 import type { ThemeMode } from "./ThemeContext";
@@ -32,7 +33,18 @@ export const ThemeToggle = () => {
       aria-label={`${THEME_LABEL[theme]}. Click to switch theme.`}
       title={THEME_LABEL[theme]}
     >
-      {THEME_ICON[theme]}
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.span
+          key={theme}
+          initial={{ rotate: -90, opacity: 0, scale: 0.6 }}
+          animate={{ rotate: 0, opacity: 1, scale: 1 }}
+          exit={{ rotate: 90, opacity: 0, scale: 0.6 }}
+          transition={{ duration: 0.25, ease: "easeOut" }}
+          style={{ display: "inline-flex" }}
+        >
+          {THEME_ICON[theme]}
+        </motion.span>
+      </AnimatePresence>
     </button>
   );
 };
