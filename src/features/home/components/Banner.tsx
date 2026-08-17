@@ -13,6 +13,7 @@ import TrackVisibility from "react-on-screen";
 import { HashLink } from "react-router-hash-link";
 import headerImg from "../../../assets/img/charanbw.png";
 import { useMagneticButton } from "../../cursor/useMagneticButton";
+import { Tilt3D } from "./Tilt3D";
 
 export const Banner = () => {
   const magneticRef = useMagneticButton<HTMLAnchorElement>();
@@ -141,7 +142,13 @@ export const Banner = () => {
                     isVisible ? "animate__animated animate__zoomIn" : ""
                   }
                 >
-                  <img src={headerImg} alt="Charan" className="banner-img" />
+                  <Tilt3D maxTilt={10} glare={false}>
+                    <img
+                      src={headerImg}
+                      alt="Charan"
+                      className="banner-img"
+                    />
+                  </Tilt3D>
                 </div>
               )}
             </TrackVisibility>

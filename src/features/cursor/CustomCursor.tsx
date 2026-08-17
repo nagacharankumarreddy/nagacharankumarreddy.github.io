@@ -3,8 +3,8 @@ import { classifyHoverTarget, isTouchDevice, prefersReducedMotion } from "./curs
 import type { CursorState } from "./cursorSupport";
 import "./cursor.css";
 
-const DOT_EASE = 0.18;
-const TRAIL_EASE = 0.1;
+const DOT_EASE = 0.45;
+const TRAIL_EASE = 0.2;
 
 export const CustomCursor = () => {
   const [enabled, setEnabled] = useState(false);
