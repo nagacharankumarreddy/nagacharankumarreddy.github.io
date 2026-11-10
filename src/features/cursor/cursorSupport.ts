@@ -1,4 +1,4 @@
-export type CursorState = "default" | "button" | "link" | "card" | "code" | "image" | "input";
+export type CursorState = "default" | "button" | "link" | "card" | "code" | "image" | "input" | "drag";
 
 export const prefersReducedMotion = (): boolean =>
   typeof window !== "undefined" &&
@@ -9,6 +9,7 @@ export const isTouchDevice = (): boolean =>
 
 const SELECTORS: { state: CursorState; selector: string }[] = [
   { state: "input", selector: "input, textarea" },
+  { state: "drag", selector: '[data-cursor="drag"]' },
   { state: "code", selector: '.markdown-body code[class*="language-"]' },
   { state: "image", selector: ".zoomable-image" },
   { state: "button", selector: 'button, [class*="btn"], .navbar-link, .scroll-button' },

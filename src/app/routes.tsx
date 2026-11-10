@@ -1,6 +1,6 @@
 import { Suspense, lazy } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { HomePage } from "../features/home/HomePage";
+import { ShowcasePage } from "../features/showcase/ShowcasePage";
 import { MainLayout } from "../layouts/MainLayout";
 
 const LearningHubPage = lazy(() =>
@@ -14,8 +14,9 @@ export const AppRoutes = () => {
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL}>
       <Routes>
+        {/* The home page owns its navbar and scroll, so it sits outside MainLayout. */}
+        <Route path="/" element={<ShowcasePage />} />
         <Route element={<MainLayout />}>
-          <Route path="/" element={<HomePage />} />
           <Route
             path="/learning-hub"
             element={

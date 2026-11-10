@@ -2,6 +2,16 @@
 
 Welcome to my portfolio! Here you'll find a collection of projects showcasing my skills and interests. Each project demonstrates different aspects of web development and design. Explore the projects below to see what I've been working on!
 
+## Setup
+
+```bash
+npm install
+npm run dev      # http://localhost:5173
+npm run build    # production build in dist/
+```
+
+The home page lives in `src/features/showcase/`. All of its text, links and images are in one file, `src/features/showcase/data/content.ts`; edit that to swap in your own content. Animations use GSAP + ScrollTrigger with Lenis smooth scrolling, and the project carousel is React Three Fiber. Visitors with reduced motion enabled get a static layout without pinning or WebGL.
+
 ## Projects 🚀
 
 ### 1. [Quick Bite 🍽️](https://nagacharankumarreddy.github.io/quick-bite/)

@@ -127,6 +127,42 @@
   color: #61dafb;
 }
 
+/* Monochrome cursor for the showcase home page */
+:root[data-page="showcase"] .custom-cursor-trail {
+  display: none;
+}
+:root[data-page="showcase"] .custom-cursor-dot {
+  width: 10px;
+  height: 10px;
+  margin: -5px 0 0 -5px;
+  border: 0;
+  background: #fff;
+  box-shadow: none;
+  mix-blend-mode: difference;
+}
+:root[data-page="showcase"] .custom-cursor-dot[data-cursor-state="button"],
+:root[data-page="showcase"] .custom-cursor-dot[data-cursor-state="link"],
+:root[data-page="showcase"] .custom-cursor-dot[data-cursor-state="card"] {
+  width: 38px;
+  height: 38px;
+  margin: -19px 0 0 -19px;
+}
+:root[data-page="showcase"] .custom-cursor-dot[data-cursor-state="drag"] {
+  width: 84px;
+  height: 84px;
+  margin: -42px 0 0 -42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+:root[data-page="showcase"] .custom-cursor-dot[data-cursor-state="drag"]::after {
+  content: "\2190  DRAG  \2192";
+  white-space: pre;
+  font: 500 9px/1 "JetBrains Mono", ui-monospace, monospace;
+  letter-spacing: 0.08em;
+  color: #000;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .custom-cursor-dot,
   .custom-cursor-trail {
