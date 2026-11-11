@@ -10,29 +10,30 @@ export interface RibbonState {
 }
 
 const CARD_W = 2;
-const CARD_H = 1.3;
-const CARD_STEP = CARD_W + 0.22;
+const CARD_H = 1.12;
+const CARD_STEP = CARD_W + 0.14;
 
 const vertexShader = /* glsl */ `
   uniform float uVelocity;
   uniform float uTime;
+  uniform float uPhase;
+  uniform float uHalf;
   varying vec2 vUv;
-  varying float vEdge;
 
   void main() {
     vUv = uv;
     vec4 world = modelMatrix * vec4(position, 1.0);
 
-    // Wrap the ribbon around a cylinder; speed tightens the radius and adds a wave.
+    // An S-shaped wave fixed to the screen: the centre card stays flat, the edges bend up or down.
     float speed = clamp(uVelocity * 14.0, -1.0, 1.0);
-    float radius = 6.4 - abs(speed) * 2.2;
-    float theta = clamp(world.x / radius, -1.5, 1.5);
+    float n = world.x / uHalf;
+    float edge = smoothstep(0.12, 1.15, abs(n));
+    float amp = 0.42 + abs(speed) * 0.35;
 
-    world.y += sin(world.x * 0.9 + uTime * 0.7) * 0.06 + sin(world.x * 1.5 - uTime) * speed * 0.16;
-    world.z += radius * cos(theta) - radius;
-    world.x = radius * sin(theta);
+    world.y += amp * edge * sin(n * 2.2 + uPhase);
+    world.y += sin(world.x * 1.4 + uTime * 0.8) * 0.025;
+    world.z -= 0.2 * n * n;
 
-    vEdge = abs(theta);
     gl_Position = projectionMatrix * viewMatrix * world;
   }
 `;
@@ -42,17 +43,13 @@ const fragmentShader = /* glsl */ `
   uniform vec2 uCover;
   uniform vec2 uSize;
   varying vec2 vUv;
-  varying float vEdge;
 
   void main() {
     vec2 uv = (vUv - 0.5) * uCover + 0.5;
-    vec3 texel = texture2D(uMap, uv).rgb;
-    float grey = dot(texel, vec3(0.299, 0.587, 0.114));
-    vec3 color = vec3(smoothstep(0.02, 0.98, grey));
-    color = mix(color, vec3(0.85), smoothstep(0.3, 1.25, vEdge) * 0.8);
+    vec3 color = texture2D(uMap, uv).rgb;
 
     vec2 p = (vUv - 0.5) * uSize;
-    float r = 0.07;
+    float r = 0.035;
     vec2 q = abs(p) - uSize * 0.5 + r;
     float dist = length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r;
     float alpha = 1.0 - smoothstep(-0.006, 0.006, dist);
@@ -73,9 +70,9 @@ const Ribbon = ({ images, state, onActive }: RibbonProps) => {
   const group = useRef<THREE.Group>(null);
   const activeIndex = useRef(-1);
   const viewportWidth = useThree((three) => three.viewport.width);
-  const scale = Math.min(1, viewportWidth / 2.5);
+  const scale = Math.min(1, viewportWidth / 2.9);
 
-  const geometry = useMemo(() => new THREE.PlaneGeometry(CARD_W, CARD_H, 32, 8), []);
+  const geometry = useMemo(() => new THREE.PlaneGeometry(CARD_W, CARD_H, 48, 12), []);
   const materials = useMemo(
     () =>
       textures.map((texture) => {
@@ -96,6 +93,8 @@ const Ribbon = ({ images, state, onActive }: RibbonProps) => {
             uSize: { value: new THREE.Vector2(CARD_W, CARD_H) },
             uVelocity: { value: 0 },
             uTime: { value: 0 },
+            uPhase: { value: 0 },
+            uHalf: { value: 2.5 },
           },
           vertexShader,
           fragmentShader,
@@ -121,9 +120,13 @@ const Ribbon = ({ images, state, onActive }: RibbonProps) => {
     s.velocity += (s.current - previous - s.velocity) * 0.18;
 
     if (group.current) group.current.position.x = -s.current * CARD_STEP * scale;
+    // The wave's shape drifts as the ribbon travels, so the edges alternate between rising and dipping.
+    const phase = Math.sin(s.current * 1.3) * 0.9;
     for (const material of materials) {
       material.uniforms.uVelocity.value = s.velocity;
       material.uniforms.uTime.value += delta;
+      material.uniforms.uPhase.value = phase;
+      material.uniforms.uHalf.value = viewportWidth / 2;
     }
 
     const index = Math.min(images.length - 1, Math.max(0, Math.round(s.current)));

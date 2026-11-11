@@ -101,17 +101,25 @@ export const StarryNight = ({ className = "" }: { className?: string }) => {
       viewBox={`0 0 ${W} ${H}`}
       preserveAspectRatio="xMidYMid slice"
       fill="none"
-      stroke="#0a0a0a"
+      stroke="#f5f5f5"
       strokeLinecap="round"
       aria-hidden="true"
     >
+      <defs>
+        <radialGradient id="aw-star-glow">
+          <stop offset="0" stopColor="#fff" stopOpacity="0.55" />
+          <stop offset="1" stopColor="#fff" stopOpacity="0" />
+        </radialGradient>
+      </defs>
+      <rect width={W} height={H} fill="#0b0b0b" stroke="none" />
       <path d={sky[0]} strokeWidth="1" opacity="0.38" />
       <path d={sky[1]} strokeWidth="1.6" opacity="0.46" />
       <path d={sky[2]} strokeWidth="2.4" opacity="0.5" />
 
       {STARS.map(([x, y, r]) => (
         <g key={`${x}-${y}`}>
-          <circle cx={x} cy={y} r={r * 0.28} fill="#0a0a0a" stroke="none" />
+          <circle cx={x} cy={y} r={r * 2.6} fill="url(#aw-star-glow)" stroke="none" />
+          <circle cx={x} cy={y} r={r * 0.28} fill="#f5f5f5" stroke="none" />
           <circle cx={x} cy={y} r={r * 0.7} strokeWidth="2" strokeDasharray="5 6" />
           <circle cx={x} cy={y} r={r * 1.15} strokeWidth="1.6" strokeDasharray="9 8" opacity="0.8" />
           <circle cx={x} cy={y} r={r * 1.65} strokeWidth="1.2" strokeDasharray="12 11" opacity="0.6" />
@@ -119,7 +127,8 @@ export const StarryNight = ({ className = "" }: { className?: string }) => {
       ))}
 
       <g>
-        <path d="M1400 96a58 58 0 1 0 44 98a46 46 0 1 1-44-98z" fill="#0a0a0a" stroke="none" />
+        <circle cx="1410" cy="150" r="190" fill="url(#aw-star-glow)" stroke="none" />
+        <path d="M1400 96a58 58 0 1 0 44 98a46 46 0 1 1-44-98z" fill="#f5f5f5" stroke="none" />
         <circle cx="1410" cy="150" r="82" strokeWidth="2" strokeDasharray="10 9" />
         <circle cx="1410" cy="150" r="108" strokeWidth="1.5" strokeDasharray="14 12" opacity="0.7" />
       </g>
@@ -128,13 +137,13 @@ export const StarryNight = ({ className = "" }: { className?: string }) => {
         <path key={i} d={d} strokeWidth="1.5" opacity="0.6" />
       ))}
 
-      <g transform="translate(0 378) scale(0.58)" stroke="none">
-        <path d={CASTLE} fill="#0a0a0a" />
+      <g transform="translate(20 90) scale(0.9)" stroke="none">
+        <path d={CASTLE} fill="#000" stroke="rgba(255,255,255,0.45)" strokeWidth="2.5" />
         {WINDOWS.map(([x, y]) => (
           <path
             key={`${x}-${y}`}
             d={`M${x - 6} ${y + 20}V${y + 4}Q${x} ${y - 12} ${x + 6} ${y + 4}V${y + 20}Z`}
-            fill="#ededed"
+            fill="#f5f5f5"
           />
         ))}
       </g>

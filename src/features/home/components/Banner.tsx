@@ -10,7 +10,7 @@ import {
   FaPhoneAlt,
 } from "react-icons/fa";
 import { HashLink } from "react-router-hash-link";
-import headerImg from "../../../assets/img/charanbw.png";
+import headerImg from "../../../assets/img/charanbw2.png";
 import { useMagneticButton } from "../../cursor/useMagneticButton";
 import { Tilt3D } from "./Tilt3D";
 

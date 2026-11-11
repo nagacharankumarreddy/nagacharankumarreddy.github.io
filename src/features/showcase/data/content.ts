@@ -1,6 +1,6 @@
 // Single source of truth for the home page. Swap text, links and images here.
 import calculator from "../../../assets/img/calculator.png";
-import portrait from "../../../assets/img/charanbw.png";
+import portrait from "../../../assets/img/charanbw2.png";
 import dice from "../../../assets/img/dice.png";
 import guess from "../../../assets/img/Guess.png";
 import interest from "../../../assets/img/interest.png";
@@ -70,16 +70,18 @@ export const hero = {
 export const about = {
   wordLeft: "ABOUT",
   wordRight: "ME",
-  eyebrow: "Who I am",
-  manifesto:
-    "I'm a full-stack developer driven by curiosity and a relentless desire for growth. I thrive on complex challenges, stay close to modern technologies, and refine every detail until the result feels effortless to use.",
-  meta: [
-    { label: "Location", value: "India" },
-    { label: "Experience", value: "5+ Years" },
-    { label: "Focus", value: "Full Stack Web" },
+  headline: "Turning visionary ideas into fast, distinctive digital experiences",
+  location: "Based in India • Worldwide",
+  craftLabel: "Discipline & Craft",
+  craft: "React • Node.js • Azure • Kubernetes",
+  // Each entry is revealed as its own line.
+  lines: [
+    "Full-stack developer with 5+ years of building products end to end.",
+    "Driven by curiosity, a design mindset and close attention to detail.",
+    "From interface to infrastructure, refined until it feels effortless.",
   ],
-  cvLabel: "Download CV",
-  contactLabel: "Contact",
+  primaryLabel: "Get in touch",
+  secondaryLabel: "Services",
 };
 
 export const experience = {
@@ -200,7 +202,7 @@ export const works = {
 };
 
 export const services = {
-  heading: "THE SERVICES WE PROVIDE",
+  heading: "SERVICES",
   subtitle: "Design and engineering, from first sketch to production",
   inquireLabel: "Inquire",
   items: [

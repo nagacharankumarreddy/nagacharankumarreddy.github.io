@@ -97,7 +97,7 @@ export const CurvedCarousel = () => {
   return (
     <section ref={rootRef} id="landing-pages" className="aw-carousel aw-light">
       <div ref={pinRef} className="aw-carousel-pin">
-        <GlitchText text={carousel.heading} className="aw-display aw-carousel-title" />
+        <GlitchText text={carousel.heading} className="aw-carousel-title" />
 
         {reducedMotion ? (
           <div className="aw-strip">
@@ -149,7 +149,7 @@ export const CurvedCarousel = () => {
           </>
         )}
 
-        <p className="aw-eyebrow aw-carousel-label">{carousel.label}</p>
+        <p className="aw-carousel-label">{carousel.label}</p>
       </div>
     </section>
   );

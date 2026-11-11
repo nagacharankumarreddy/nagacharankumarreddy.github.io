@@ -31,35 +31,44 @@ export const WorksRing = () => {
       const dt = Math.min(deltaMs, 50) / 1000;
       live.burst += (target.burst - live.burst) * Math.min(1, dt * 6);
       live.slot += (target.slot - live.slot) * Math.min(1, dt * 7);
-      live.angle += dt * 14 * (1 - live.burst);
+      live.angle += dt * 8 * (1 - live.burst);
 
       const t = live.burst * live.burst * (3 - 2 * live.burst);
-      const cardHeight = cards[0].offsetHeight;
-      const radius = Math.min(window.innerWidth * 0.36, 440);
-      const ringScale = window.innerWidth < 768 ? 0.5 : 0.58;
+      const cardW = cards[0].offsetWidth;
+      const cardH = cards[0].offsetHeight;
+
+      // Ring: one card on each edge of a flat hexagon, lying along that edge.
+      const apothem = Math.min(window.innerHeight * 0.28, window.innerWidth * 0.3);
+      const ringScale = ((apothem * 2) / Math.sqrt(3)) * 0.8 / cardW;
+      // Stack: cards on a vertical drum, tilting away as they leave the centre.
+      const drum = cardH * 1.9;
+      const step = 38;
 
       cards.forEach((card, i) => {
-        let theta = (live.angle + (i * 360) / COUNT) % 360;
+        let theta = (-90 + i * 60 + live.angle) % 360;
         if (theta > 180) theta -= 360;
         const rad = (theta * Math.PI) / 180;
-        const offset = i - live.slot;
+        // Lie along the edge, but never upside-down.
+        let ringRot = theta + 90;
+        if (ringRot > 90) ringRot -= 180;
+        if (ringRot < -90) ringRot += 180;
 
-        const x = mix(radius * Math.sin(rad), 0, t);
-        const y = mix(0, offset * cardHeight * 1.12, t);
-        const z = mix(radius * Math.cos(rad), -Math.abs(offset) * 70, t);
-        const rotateY = mix(theta, 0, t);
-        const rotateZ = mix(0, Math.max(-1, Math.min(1, offset)) * -3, t);
+        const phi = Math.max(-100, Math.min(100, (i - live.slot) * step));
+        const phiRad = (phi * Math.PI) / 180;
+
+        const x = mix(apothem * Math.cos(rad), 0, t);
+        const y = mix(apothem * Math.sin(rad), drum * Math.sin(phiRad), t);
+        const z = mix(0, drum * (Math.cos(phiRad) - 1), t);
+        const rotateZ = mix(ringRot, 0, t);
+        const rotateX = mix(0, -phi, t);
         const scale = mix(ringScale, 1, t);
 
-        card.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, ${z.toFixed(1)}px) rotateY(${rotateY.toFixed(2)}deg) rotateZ(${rotateZ.toFixed(2)}deg) scale(${scale.toFixed(3)})`;
-        card.style.opacity = (1 - Math.min(1, Math.abs(offset)) * 0.6 * t).toFixed(3);
+        card.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, ${z.toFixed(1)}px) rotateZ(${rotateZ.toFixed(2)}deg) rotateX(${rotateX.toFixed(2)}deg) scale(${scale.toFixed(3)})`;
+        card.style.opacity = mix(1, clamp01((92 - Math.abs(phi)) / 22), t).toFixed(3);
       });
 
-      if (tilt) tilt.style.transform = `rotateX(${mix(-16, 0, t).toFixed(2)}deg) rotateZ(${mix(-7, 0, t).toFixed(2)}deg)`;
-      if (center) {
-        center.style.opacity = clamp01(1 - t * 1.8).toFixed(3);
-        center.style.transform = `translate(-50%, -50%) scale(${mix(1, 0.8, t).toFixed(3)})`;
-      }
+      if (tilt) tilt.style.transform = `rotateX(${mix(24, 0, t).toFixed(2)}deg)`;
+      if (center) center.style.opacity = clamp01(1 - t * 1.8).toFixed(3);
       const sideOpacity = clamp01((t - 0.6) / 0.4).toFixed(3);
       sides.forEach((side) => (side.style.opacity = sideOpacity));
 
@@ -77,8 +86,8 @@ export const WorksRing = () => {
         start: "top top",
         end: "+=420%",
         onUpdate: (self) => {
-          target.burst = clamp01((self.progress - 0.08) / 0.22);
-          target.slot = clamp01((self.progress - 0.34) / 0.6) * (COUNT - 1);
+          target.burst = clamp01((self.progress - 0.06) / 0.2);
+          target.slot = clamp01((self.progress - 0.3) / 0.64) * (COUNT - 1);
         },
       });
       ScrollTrigger.create({
@@ -99,14 +108,14 @@ export const WorksRing = () => {
   return (
     <section ref={rootRef} id="works" className="aw-works aw-light">
       <div ref={pinRef} className="aw-works-pin">
-        <h2 className="aw-works-center aw-display">{works.title}</h2>
+        <h2 className="aw-works-center">{works.title}</h2>
 
         <div className="aw-works-side aw-works-name">
           <p className="aw-mono">
             {pad(active + 1)} / {pad(COUNT)}
           </p>
           <div key={active} className="aw-swap">
-            <p className="aw-display aw-works-title">{items[active].title}</p>
+            <p className="aw-works-title">{items[active].title}</p>
             <p className="aw-eyebrow">{items[active].subtitle}</p>
           </div>
         </div>
@@ -135,9 +144,6 @@ export const WorksRing = () => {
                   <span className="aw-mono aw-works-tag">
                     {pad(i + 1)} — {item.title}
                   </span>
-                </span>
-                <span className="aw-works-face aw-works-face--back aw-mono" aria-hidden="true">
-                  {pad(i + 1)}
                 </span>
               </a>
             ))}
