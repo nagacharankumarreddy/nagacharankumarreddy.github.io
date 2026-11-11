@@ -568,6 +568,24 @@
   height: 100%;
   will-change: transform;
 }
+.aw-ab-sound {
+  position: absolute;
+  right: 3vw;
+  bottom: 0.9svh;
+  z-index: 3;
+  padding: 0.3rem 0.7rem;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 999px;
+  background: rgba(5, 5, 5, 0.6);
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.62rem;
+  cursor: pointer;
+}
+.aw-ab-sound:hover,
+.aw-ab-sound:focus-visible {
+  border-color: #fff;
+  color: #fff;
+}
 .aw-ab-vignette {
   position: absolute;
   inset: 0;

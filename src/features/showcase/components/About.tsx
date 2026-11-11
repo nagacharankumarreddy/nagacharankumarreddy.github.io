@@ -1,6 +1,7 @@
-import { useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { about } from "../data/content";
 import { gsap, reducedMotion, scrollToSection } from "../lib/motion";
+import { playSfx, setSfxEnabled, type Sfx } from "../lib/sfx";
 import { Magnetic } from "./Magnetic";
 import { SpotlightArt } from "./art/SpotlightArt";
 import { StarryNight } from "./art/StarryNight";
@@ -36,19 +37,27 @@ export const About = () => {
       const split = () => (isWide() ? 37 : 30);
 
       // Timeline positions are percentages of the pinned scroll distance.
-      gsap
-        .timeline({
+      const tl = gsap.timeline({
           defaults: { ease: "none" },
           scrollTrigger: {
             trigger: rootRef.current,
             pin: stage,
             start: "top top",
-            end: "+=300%",
+            end: "+=430%",
             scrub: 1,
             invalidateOnRefresh: true,
           },
-        })
-        .fromTo(stage, size(0), { ...size(1), duration: 25, ease: "power2.inOut" }, 8)
+        });
+      // Sounds only fire while scrolling forward, never on the way back up.
+      const cue = (name: Sfx) => () => {
+        if ((tl.scrollTrigger?.direction ?? 1) > 0) playSfx(name);
+      };
+      const slashTrail = (selector: string, at: number) =>
+        tl
+          .fromTo(selector, { opacity: 1, strokeDashoffset: 100 }, { strokeDashoffset: 0, duration: 2.5, ease: "power2.out" }, at)
+          .to(selector, { strokeDashoffset: -100, opacity: 0, duration: 2.5, ease: "power1.in" }, at + 2.5);
+
+      tl.fromTo(stage, size(0), { ...size(1), duration: 25, ease: "power2.inOut" }, 8)
         .to(stage, { ...size(2), duration: 20, ease: "power1.inOut" }, 33)
         .to(stage, { ...size(3), duration: 20, ease: "power2.inOut" }, 53)
 
@@ -78,27 +87,86 @@ export const About = () => {
         )
         .fromTo(".aw-art-figure", { opacity: 0.35 }, { opacity: 1, duration: 22 }, 20)
         .fromTo(".aw-art-beam", { opacity: 0.7 }, { opacity: 1, duration: 40 }, 25)
+        // He stands up like a hero, draws a sword, twirls it, fights, then light rays burst from him.
+        .fromTo(".aw-art-figure", { y: 0 }, { y: -30, duration: 26, ease: "power2.inOut" }, 36)
+        .to(".aw-fig-leg-a", { morphSVG: "M814 640 L810 598 L806 556", duration: 26, ease: "power2.inOut" }, 36)
+        .to(".aw-fig-leg-b", { morphSVG: "M798 640 L802 598 L806 556", duration: 26, ease: "power2.inOut" }, 36)
+        .to(".aw-fig-torso", { morphSVG: "M806 556 Q806 524 806 492", duration: 26, ease: "power2.inOut" }, 36)
+        .to(".aw-fig-arm-a", { morphSVG: "M806 506 Q788 532 782 566", duration: 26, ease: "power2.inOut" }, 36)
+        .to(".aw-fig-arm-b", { morphSVG: "M806 506 Q824 532 830 566", duration: 26, ease: "power2.inOut" }, 36)
+        .to(".aw-fig-head", { attr: { cx: 806, cy: 470 }, duration: 26, ease: "power2.inOut" }, 36)
+        .fromTo(".aw-art-shadow", { scale: 1, opacity: 0.7 }, { scale: 0.55, opacity: 0.3, transformOrigin: "50% 50%", duration: 26, ease: "power2.inOut" }, 36)
+        .fromTo(".aw-art-lift", { y: 0 }, { y: -72, duration: 26, ease: "power2.inOut" }, 36)
 
-        .fromTo(".aw-ab-vignette", { opacity: 0 }, { opacity: 1, duration: 8 }, 70)
+        .fromTo(".aw-sword", { opacity: 0, scale: 0.3, rotation: 150, svgOrigin: "0 0" }, { opacity: 1, scale: 1, rotation: 28, svgOrigin: "0 0", duration: 8, ease: "back.out(1.8)" }, 62)
+        .call(cue("shing"), [], 63)
+        // Three turns of the sword. The About text arrives one piece at a time while it spins.
+        .to(".aw-sword", { rotation: 1108, svgOrigin: "0 0", duration: 18, ease: "power2.inOut" }, 72)
+        .call(cue("whoosh"), [], 75)
+        .call(cue("whoosh"), [], 80)
+        .call(cue("whoosh"), [], 85)
+        .fromTo(".aw-ab-vignette", { opacity: 0 }, { opacity: 1, duration: 8 }, 68)
         .fromTo(
           ".aw-ab-headline, .aw-ab-location",
           { opacity: 0, y: 20, filter: "blur(8px)" },
-          { opacity: 1, y: 0, filter: "blur(0px)", duration: 8, ease: "power2.out", stagger: 2 },
-          74
+          { opacity: 1, y: 0, filter: "blur(0px)", duration: 4, ease: "power2.out", stagger: 3 },
+          72
         )
-        .fromTo(".aw-ab-divider", { scaleX: 0 }, { scaleX: 1, duration: 10, ease: "power2.inOut" }, 77)
-        .fromTo(".aw-ab-craft", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 7, ease: "power2.out" }, 79)
-        .fromTo(".aw-ab-line > span", { yPercent: 110 }, { yPercent: 0, duration: 8, ease: "power3.out", stagger: 2 }, 81)
+        .fromTo(".aw-ab-divider", { scaleX: 0 }, { scaleX: 1, duration: 4, ease: "power2.inOut" }, 78)
+        .fromTo(".aw-ab-craft", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 4, ease: "power2.out" }, 78)
+        .fromTo(".aw-ab-line > span", { yPercent: 110 }, { yPercent: 0, duration: 4, ease: "power3.out", stagger: 3 }, 81)
+
+        // Fight moves: wide stance, overhead slash, sweeping back slash, then sword to the sky.
+        .to(".aw-fig-leg-a", { morphSVG: "M828 640 L819 600 L806 556", duration: 3, ease: "power2.out" }, 92)
+        .to(".aw-fig-leg-b", { morphSVG: "M784 640 L795 598 L806 556", duration: 3, ease: "power2.out" }, 92)
+        .to(".aw-fig-arm-b", { morphSVG: "M806 506 Q826 486 840 462", duration: 3, ease: "power2.out" }, 92)
+        .to(".aw-sword-hand", { x: 10, y: -104, duration: 3, ease: "power2.out" }, 92)
+        .to(".aw-sword", { rotation: 1040, svgOrigin: "0 0", duration: 3, ease: "power2.out" }, 92)
+
+        .to(".aw-fig-arm-b", { morphSVG: "M806 506 Q832 512 852 528", duration: 3, ease: "power3.in" }, 95)
+        .to(".aw-sword-hand", { x: 22, y: -38, duration: 3, ease: "power3.in" }, 95)
+        .to(".aw-sword", { rotation: 1195, svgOrigin: "0 0", duration: 3, ease: "power3.in" }, 95)
+        .call(cue("slash"), [], 96)
+
+        .to(".aw-fig-arm-b", { morphSVG: "M806 506 Q790 500 770 516", duration: 5, ease: "power3.inOut" }, 100)
+        .to(".aw-fig-arm-a", { morphSVG: "M806 506 Q784 524 772 548", duration: 5, ease: "power3.inOut" }, 100)
+        .to(".aw-sword-hand", { x: -60, y: -50, duration: 5, ease: "power3.inOut" }, 100)
+        .to(".aw-sword", { rotation: 1000, svgOrigin: "0 0", duration: 5, ease: "power3.inOut" }, 100)
+        .call(cue("slash"), [], 101.5)
+
+        .to(".aw-fig-arm-b", { morphSVG: "M806 506 Q824 484 828 452", duration: 4, ease: "back.out(1.4)" }, 106)
+        .to(".aw-fig-arm-a", { morphSVG: "M806 506 Q788 532 782 566", duration: 4, ease: "power2.out" }, 106)
+        .to(".aw-sword-hand", { x: -2, y: -114, duration: 4, ease: "back.out(1.4)" }, 106)
+        .to(".aw-sword", { rotation: 1080, svgOrigin: "0 0", duration: 4, ease: "back.out(1.4)" }, 106)
+
+        .call(cue("boom"), [], 110)
+        .fromTo(".aw-art-figure", { scale: 1 }, { scale: 1.06, svgOrigin: "806 640", duration: 3, ease: "power2.out", yoyo: true, repeat: 1 }, 110)
+        .fromTo(
+          ".aw-art-rays",
+          { opacity: 0, scale: 0.05, rotation: -20, svgOrigin: "0 0" },
+          { opacity: 1, scale: 1, rotation: 8, svgOrigin: "0 0", duration: 14, ease: "power4.out" },
+          109
+        )
+        .to(".aw-art-rays", { opacity: 0.75, duration: 8 }, 123)
+
         .fromTo(
           ".aw-ab-actions .aw-pill",
           { opacity: 0, scale: 0.9 },
           { opacity: 1, scale: 1, duration: 7, ease: "back.out(1.6)", stagger: 2 },
-          86
+          112
         )
         .to({}, { duration: 6 });
+      slashTrail(".aw-slash-1", 95.5);
+      slashTrail(".aw-slash-2", 101);
     }, rootRef);
     return () => ctx.revert();
   }, []);
+
+  const [sound, setSound] = useState(true);
+  const toggleSound = () => {
+    setSfxEnabled(!sound);
+    setSound(!sound);
+  };
 
   const go = (id: string) => (event: { preventDefault: () => void }) => {
     event.preventDefault();
@@ -162,6 +230,12 @@ export const About = () => {
             </div>
           </div>
         </div>
+
+        {!reducedMotion && (
+          <button type="button" className="aw-mono aw-ab-sound" onClick={toggleSound} aria-pressed={sound}>
+            Sound {sound ? "on" : "off"}
+          </button>
+        )}
 
         <div className="aw-ab-words aw-display" aria-hidden="true">
           <span className="aw-ab-word aw-ab-word--left aw-ghost" data-text={about.wordLeft}>

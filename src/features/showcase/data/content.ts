@@ -1,17 +1,17 @@
 // Single source of truth for the home page. Swap text, links and images here.
-import calculator from "../../../assets/img/calculator.png";
-import portrait from "../../../assets/img/charanbw2.png";
-import dice from "../../../assets/img/dice.png";
-import guess from "../../../assets/img/Guess.png";
-import interest from "../../../assets/img/interest.png";
+import portrait from "../../../assets/img/Hooded Graphite Portrait Sketch.png";
 import markdown from "../../../assets/img/markdown.png";
 import moviehub from "../../../assets/img/moviehub.png";
 import movieNotifier from "../../../assets/img/movieupdatenotifier.png";
 import onlycss from "../../../assets/img/onlycss.png";
-import pwdStrength from "../../../assets/img/pwdstrengthcheck.png";
+import calculator from "../../../assets/img/projects/calculator-expr.webp";
+import dice from "../../../assets/img/projects/dice-game.webp";
+import guess from "../../../assets/img/projects/guess-game.webp";
+import interest from "../../../assets/img/projects/interest-result.webp";
+import pwdStrength from "../../../assets/img/projects/password-strong.webp";
+import techtips from "../../../assets/img/projects/techtips-tip.webp";
+import tictactoe from "../../../assets/img/projects/tictactoe-play.webp";
 import quickbite from "../../../assets/img/quickbite.png";
-import techtips from "../../../assets/img/techtips.jpg";
-import tictactoe from "../../../assets/img/tictactoe.png";
 
 export interface ProjectItem {
   title: string;
@@ -23,7 +23,7 @@ export interface ProjectItem {
 export const site = {
   brand: "CHARAN",
   name: "Naga Charan Kumar Reddy",
-  role: "Full Stack Developer",
+  role: "Senior Full Stack Developer",
   email: "nagacharankumarreddy@gmail.com",
   cv: `${import.meta.env.BASE_URL}Naga_Charan_Full_Stack_Dev.pdf`,
   year: new Date().getFullYear(),
@@ -60,7 +60,7 @@ export const hero = {
   // Any image works; a transparent cut-out PNG gives the strongest overlap effect.
   portrait,
   portraitAlt: "Portrait of Naga Charan",
-  label: ["Full Stack Developer", "Portfolio — Vol. 26"],
+  label: ["Senior Full Stack Developer", "Portfolio — Vol. 26"],
   introTitle: "I am passionate about…",
   intro:
     "Building user-focused products end to end. Driven by curiosity, a design mindset and close attention to detail.",
@@ -71,13 +71,13 @@ export const about = {
   wordLeft: "ABOUT",
   wordRight: "ME",
   headline: "Turning visionary ideas into fast, distinctive digital experiences",
-  location: "Based in India • Worldwide",
+  location: "Hyderabad, India • Worldwide",
   craftLabel: "Discipline & Craft",
-  craft: "React • Node.js • Azure • Kubernetes",
+  craft: "React • TypeScript • Python • Node.js",
   // Each entry is revealed as its own line.
   lines: [
-    "Full-stack developer with 5+ years of building products end to end.",
-    "Driven by curiosity, a design mindset and close attention to detail.",
+    "Senior full-stack developer with 5+ years of building enterprise web apps.",
+    "Shipped products across healthcare, financial services and banking.",
     "From interface to infrastructure, refined until it feels effortless.",
   ],
   primaryLabel: "Get in touch",
@@ -85,34 +85,50 @@ export const about = {
 };
 
 export const experience = {
-  marquee: "CREATIVE TECHNOLOGIST 2023 SELF-DIRECTED 2025 PRESENT",
+  marquee: "WIPRO 2020 BERKADIA 2023 HCA HEALTHCARE 2025 PRESENT",
   intro: {
     eyebrow: "Origin & Foundations",
-    tag: "Foundation Alignment",
+    tag: "5+ Years",
     heading: "WHERE I'VE BEEN",
-    text: "My professional journey through different roles and environments.",
+    text: "Three companies across banking, financial services and healthcare.",
   },
-  first: {
-    date: "2023 — 2025",
-    heading: "CREATIVE TECHNOLOGIST",
-    eyebrow: "Self-Directed Learning",
-    text: "Two years of deliberate practice: shipping small products, studying how great interfaces are built, and turning curiosity into a repeatable craft.",
-    milestones: [
-      { label: "Milestone 01", text: "Mastered React, Node.js and the modern JavaScript ecosystem." },
-      { label: "Milestone 02", text: "Built a portfolio of 15+ production-ready projects." },
-    ],
-  },
-  second: {
-    date: "2025 — PRESENT",
-    heading: "FULL STACK DEVELOPER",
-    text: "Building premium web experiences, interactive frontends, scalable backends and AI-powered applications.",
-    columns: [
-      { label: "Delivery", text: "Ships features end to end, from interface to database." },
-      { label: "Infrastructure", text: "Docker, Kubernetes and CI/CD pipelines on Azure." },
-      { label: "Motion System", text: "Scroll-driven, 60fps interfaces built on GSAP." },
-    ],
-  },
-  tags: ["Learning", "Freelance"],
+  // One panel per company, oldest first.
+  roles: [
+    {
+      date: "2020 — 2023",
+      company: "Wipro",
+      heading: "FRONT END DEVELOPER",
+      text: "Built the interface of a payments application for a banking client.",
+      columns: [
+        { label: "Interfaces", text: "React dashboards for tracking payment activity in real time." },
+        { label: "Integration", text: "REST APIs wired to dynamic UI, with no page reloads." },
+        { label: "Quality", text: "Refactored UI code, form validation and accessibility." },
+      ],
+    },
+    {
+      date: "2023 — 2025",
+      company: "Berkadia",
+      heading: "FULL STACK DEVELOPER",
+      text: "Built loan-servicing and cash-movement applications for financial services.",
+      columns: [
+        { label: "Frontend", text: "Reusable React components, lazy loading and memoization." },
+        { label: "Backend", text: "Node.js microservices with CQRS and MySQL." },
+        { label: "Search", text: "Elasticsearch for fast, real-time record search." },
+      ],
+    },
+    {
+      date: "2025 — PRESENT",
+      company: "HCA Healthcare",
+      heading: "SENIOR FULL STACK DEVELOPER",
+      text: "Building a healthcare data platform that brings patient information together behind one secure interface.",
+      columns: [
+        { label: "Frontend", text: "React, TypeScript and Vite, with reusable components." },
+        { label: "Backend", text: "Python and FastAPI services on PostgreSQL." },
+        { label: "Security", text: "Microsoft Entra ID, OAuth 2.0 and API gateways." },
+      ],
+    },
+  ],
+  tags: ["Healthcare", "Finance", "Banking"],
 };
 
 export const carousel = {
@@ -223,8 +239,8 @@ export const services = {
     },
     {
       title: "Development",
-      text: "Full-stack builds with React, Node.js and cloud infrastructure. Fast, accessible and easy to maintain.",
-      deliverables: "Frontend, APIs, database, CI/CD, deployment",
+      text: "Full-stack builds with React, TypeScript, Python, Node.js and cloud infrastructure. Fast, secure and easy to maintain.",
+      deliverables: "Frontend, APIs, microservices, database, CI/CD",
     },
   ],
 };

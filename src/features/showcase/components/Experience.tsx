@@ -8,7 +8,7 @@ export const Experience = () => {
   const rootRef = useRef<HTMLElement>(null);
   const pinRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
-  const { intro, first, second } = experience;
+  const { intro, roles } = experience;
 
   useLayoutEffect(() => {
     if (reducedMotion) return;
@@ -90,40 +90,26 @@ export const Experience = () => {
             <Lines manual text={intro.text} className="aw-exp-text" />
           </article>
 
-          <article className="aw-exp-panel">
-            <p className="aw-mono aw-exp-date" data-rise="">
-              {first.date}
-            </p>
-            <GlitchText manual text={first.heading} className="aw-display aw-exp-title" />
-            <p className="aw-eyebrow" data-rise="">
-              {first.eyebrow}
-            </p>
-            <Lines manual text={first.text} className="aw-exp-text" />
-            <div className="aw-exp-grid aw-exp-grid--two">
-              {first.milestones.map((item) => (
-                <div key={item.label} className="aw-exp-block" data-rise="">
-                  <p className="aw-eyebrow">{item.label}</p>
-                  <p>{item.text}</p>
-                </div>
-              ))}
-            </div>
-          </article>
-
-          <article className="aw-exp-panel">
-            <p className="aw-mono aw-exp-date" data-rise="">
-              {second.date}
-            </p>
-            <GlitchText manual text={second.heading} className="aw-display aw-exp-title" />
-            <Lines manual text={second.text} className="aw-exp-text" />
-            <div className="aw-exp-grid aw-exp-grid--three">
-              {second.columns.map((item) => (
-                <div key={item.label} className="aw-exp-block" data-rise="">
-                  <p className="aw-eyebrow">{item.label}</p>
-                  <p>{item.text}</p>
-                </div>
-              ))}
-            </div>
-          </article>
+          {roles.map((role) => (
+            <article key={role.company} className="aw-exp-panel">
+              <p className="aw-mono aw-exp-date" data-rise="">
+                {role.date}
+              </p>
+              <GlitchText manual text={role.heading} className="aw-display aw-exp-title" />
+              <p className="aw-eyebrow" data-rise="">
+                {role.company}
+              </p>
+              <Lines manual text={role.text} className="aw-exp-text" />
+              <div className="aw-exp-grid aw-exp-grid--three">
+                {role.columns.map((item) => (
+                  <div key={item.label} className="aw-exp-block" data-rise="">
+                    <p className="aw-eyebrow">{item.label}</p>
+                    <p>{item.text}</p>
+                  </div>
+                ))}
+              </div>
+            </article>
+          ))}
         </div>
 
         <div className="aw-exp-foot">

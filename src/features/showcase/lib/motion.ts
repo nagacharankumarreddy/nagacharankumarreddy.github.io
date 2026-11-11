@@ -1,10 +1,11 @@
 import gsap from "gsap";
+import { MorphSVGPlugin } from "gsap/MorphSVGPlugin";
 import { MotionPathPlugin } from "gsap/MotionPathPlugin";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import type Lenis from "lenis";
 import { prefersReducedMotion } from "../../cursor/cursorSupport";
 
-gsap.registerPlugin(ScrollTrigger, MotionPathPlugin);
+gsap.registerPlugin(ScrollTrigger, MotionPathPlugin, MorphSVGPlugin);
 ScrollTrigger.config({ ignoreMobileResize: true });
 
 export { gsap, ScrollTrigger };
