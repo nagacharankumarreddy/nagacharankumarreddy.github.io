@@ -1,4 +1,4 @@
-import{e as tt,r as eS,g as tS,j as Fn}from"./index-BN9XGojh.js";/**
+import{e as tt,r as eS,g as tS,j as Fn}from"./index-np1eOz2j.js";/**
  * @license
  * Copyright 2010-2026 Three.js Authors
  * SPDX-License-Identifier: MIT
