@@ -84,6 +84,14 @@ export const CurvedCarousel = () => {
     if (!d.active) return;
     d.active = false;
     const stepPx = event.currentTarget.clientHeight * STEP_PER_HEIGHT;
+    // A click (no real drag) opens the project under the pointer.
+    if (Math.abs(event.clientX - d.startX) < 6) {
+      const box = event.currentTarget.getBoundingClientRect();
+      const offset = (event.clientX - (box.left + box.width / 2)) / stepPx;
+      const clicked = items[clamp(Math.round(state.current.current + offset))];
+      window.open(clicked.href, "_blank", "noopener,noreferrer");
+      return;
+    }
     // Throw the ribbon with its release speed, then settle on the nearest card.
     state.current.target = clamp(Math.round(state.current.target - (d.speed * 220) / stepPx));
   };

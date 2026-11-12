@@ -1,7 +1,7 @@
 // Single source of truth for the home page. Swap text, links and images here.
 import portrait from "../../../assets/img/Hooded Graphite Portrait Sketch.png";
 import markdown from "../../../assets/img/markdown.png";
-import moviehub from "../../../assets/img/moviehub.png";
+import moviehub from "../../../assets/img/projects/moviehub-home.webp";
 import movieNotifier from "../../../assets/img/movieupdatenotifier.png";
 import onlycss from "../../../assets/img/onlycss.png";
 import calculator from "../../../assets/img/projects/calculator-expr.webp";

@@ -9,6 +9,15 @@ const live = (repo) => `https://nagacharankumarreddy.github.io/${repo}/`;
 
 export const thumbnails = [
   {
+    name: "moviehub-home",
+    local: "http://localhost:3106/movie-hub",
+    live: live("movie-hub"),
+    steps: async (page) => {
+      await page.waitForSelector(".card:not(.skeleton)", { timeout: 60000 });
+      await page.waitForTimeout(3500); // posters
+    },
+  },
+  {
     name: "calculator-expr",
     local: "http://localhost:3101",
     live: live("calculator"),
