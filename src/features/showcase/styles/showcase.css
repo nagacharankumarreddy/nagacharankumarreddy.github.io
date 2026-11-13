@@ -890,6 +890,31 @@
   touch-action: pan-y;
   user-select: none;
 }
+/* Shown when the WebGL scene cannot run: the active project as a plain image. */
+.aw-carousel-flat {
+  position: absolute;
+  inset: 0;
+}
+.aw-carousel-flat img {
+  position: absolute;
+  inset: 0;
+  width: auto;
+  height: 100%;
+  margin: auto;
+  max-width: 88%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  object-position: top;
+  border-radius: 10px;
+  box-shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.45);
+  animation: aw-flat-in 0.45s ease both;
+}
+@keyframes aw-flat-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
 .aw-carousel-info {
   position: absolute;
   inset: auto 0 calc(13% + 2.5rem) 0;

@@ -12,6 +12,7 @@ import pwdStrength from "../../../assets/img/projects/password-strong.webp";
 import techtips from "../../../assets/img/projects/techtips-tip.webp";
 import tictactoe from "../../../assets/img/projects/tictactoe-play.webp";
 import quickbite from "../../../assets/img/quickbite.png";
+import bloodmate from "../../../assets/img/projects/bloodmate-home.webp";
 
 export interface ProjectItem {
   title: string;
@@ -136,6 +137,12 @@ export const carousel = {
   label: "Landing Pages",
   visitLabel: "Visit site",
   items: [
+    {
+      title: "BloodMate",
+      subtitle: "Find Blood Donors Near You",
+      image: bloodmate,
+      href: "https://nagacharankumarreddy.github.io/blood-mate/",
+    },
     {
       title: "Quick Bite",
       subtitle: "Online Food Ordering Experience",

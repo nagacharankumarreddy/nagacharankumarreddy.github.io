@@ -9,6 +9,17 @@ const live = (repo) => `https://nagacharankumarreddy.github.io/${repo}/`;
 
 export const thumbnails = [
   {
+    name: "bloodmate-home",
+    local: live("blood-mate"), // needs the hosted API, so it is captured from the live site
+    live: live("blood-mate"),
+    steps: async (page) => {
+      // The free backend can take a while to wake up; wait until the stats show real numbers.
+      await page.waitForFunction(() => /\d/.test(document.querySelector(".stats dd")?.textContent || ""), null, { timeout: 100000 });
+      await page.mouse.move(980, 330); // lean the 3D drop toward the pointer
+      await page.waitForTimeout(1800);
+    },
+  },
+  {
     name: "moviehub-home",
     local: "http://localhost:3106/movie-hub",
     live: live("movie-hub"),

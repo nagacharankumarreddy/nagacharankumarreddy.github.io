@@ -4,6 +4,7 @@ import { carousel } from "../data/content";
 import { ScrollTrigger, gsap, reducedMotion } from "../lib/motion";
 import type { RibbonState } from "./CurvedCarouselScene";
 import { GlitchText } from "./GlitchText";
+import { SceneBoundary } from "./SceneBoundary";
 
 const CurvedCarouselScene = lazy(() => import("./CurvedCarouselScene"));
 
@@ -24,6 +25,17 @@ export const CurvedCarousel = () => {
   const [active, setActive] = useState(0);
   const [running, setRunning] = useState(false);
   const [mounted, setMounted] = useState(false);
+  // True once the WebGL scene has failed; a flat image of the active project is shown instead.
+  const [, setFlat] = useState(false);
+  const flatRef = useRef(false);
+  const onSceneError = useCallback(() => {
+    flatRef.current = true;
+    setFlat(true);
+  }, []);
+  // Without the scene nothing reports the active card, so derive it from the target.
+  const syncFlat = () => {
+    if (flatRef.current) setActive(Math.round(state.current.target));
+  };
 
   useLayoutEffect(() => {
     if (reducedMotion) return;
@@ -35,6 +47,7 @@ export const CurvedCarousel = () => {
         end: "+=260%",
         onUpdate: (self) => {
           if (!drag.current.active) state.current.target = self.progress * LAST;
+          syncFlat();
         },
       });
       ScrollTrigger.create({
@@ -87,17 +100,20 @@ export const CurvedCarousel = () => {
     // A click (no real drag) opens the project under the pointer.
     if (Math.abs(event.clientX - d.startX) < 6) {
       const box = event.currentTarget.getBoundingClientRect();
-      const offset = (event.clientX - (box.left + box.width / 2)) / stepPx;
-      const clicked = items[clamp(Math.round(state.current.current + offset))];
+      const offset = flatRef.current ? 0 : (event.clientX - (box.left + box.width / 2)) / stepPx;
+      const centre = flatRef.current ? state.current.target : state.current.current;
+      const clicked = items[clamp(Math.round(centre + offset))];
       window.open(clicked.href, "_blank", "noopener,noreferrer");
       return;
     }
     // Throw the ribbon with its release speed, then settle on the nearest card.
     state.current.target = clamp(Math.round(state.current.target - (d.speed * 220) / stepPx));
+    syncFlat();
   };
 
   const step = (direction: number) => {
     state.current.target = clamp(Math.round(state.current.target) + direction);
+    syncFlat();
   };
 
   const item = items[active];
@@ -128,9 +144,18 @@ export const CurvedCarousel = () => {
               onPointerCancel={onPointerUp}
             >
               {mounted && (
-                <Suspense fallback={null}>
-                  <CurvedCarouselScene images={IMAGES} state={state} onActive={onActive} running={running} />
-                </Suspense>
+                <SceneBoundary
+                  onError={onSceneError}
+                  fallback={
+                    <div className="aw-carousel-flat">
+                      <img key={active} src={item.image} alt="" />
+                    </div>
+                  }
+                >
+                  <Suspense fallback={null}>
+                    <CurvedCarouselScene images={IMAGES} state={state} onActive={onActive} running={running} />
+                  </Suspense>
+                </SceneBoundary>
               )}
             </div>
 
